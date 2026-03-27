@@ -288,55 +288,90 @@ a{text-decoration:none;color:inherit}
 .role-viewer{background:var(--n1);color:var(--n5);border-color:var(--n1)}
 
 /* ── TEAM STRUCTURE ── */
-.team-card {
-  background: var(--wh);
-  border: 1px solid var(--n2);
-  border-radius: var(--rad);
-  padding: 16px;
-  box-shadow: var(--shadow);
-  border-left: 4px solid var(--p);
-}
-.team-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-.team-card-name {
-  font-size: .95rem;
-  font-weight: 800;
-  color: var(--n9);
-}
-.team-card-title {
-  font-size: .75rem;
-  color: var(--p);
-  font-weight: 700;
-  margin-top: 2px;
-}
-.team-card-dept {
-  font-size: .65rem;
-  color: var(--n4);
-  margin-top: 3px;
-}
-.team-info {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  font-size: .7rem;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--n2);
-}
-.team-info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.team-info-label {
-  color: var(--n4);
-  font-weight: 600;
-  font-size: .65rem;
-}
+.team-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.team-stats-row{display:flex;gap:8px;flex-wrap:wrap}
+.team-stat{background:var(--wh);border:1px solid var(--n2);border-radius:var(--rad);padding:9px 14px;box-shadow:var(--shadow);text-align:center;min-width:72px}
+.team-stat-v{font-size:1.2rem;font-weight:900;color:var(--p);font-family:'IBM Plex Mono',monospace;line-height:1;display:block}
+.team-stat-l{font-size:.58rem;color:var(--n4);margin-top:3px;display:block}
+.team-view-tabs{display:flex;gap:3px;background:var(--n1);border-radius:8px;padding:2px}
+.team-vtab{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;font-size:.72rem;font-weight:700;transition:all .15s;cursor:pointer;border:none;background:transparent;color:var(--n5);font-family:'Cairo',sans-serif}
+.team-vtab.on{background:var(--wh);color:var(--p);box-shadow:var(--shadow)}
+.team-vtab:focus{outline:var(--focus-ring);outline-offset:1px}
+.team-vtab svg{width:13px;height:13px}
+
+/* Org chart tree */
+.org-wrap{overflow-x:auto;padding:4px 0 28px;-webkit-overflow-scrolling:touch}
+.org-tree{display:inline-flex;flex-direction:column;align-items:center;direction:ltr;min-width:100%;padding:10px 30px}
+.ot-node{display:flex;flex-direction:column;align-items:center}
+.ot-vline{width:2px;height:20px;background:var(--n3);margin:0 auto}
+.ot-children{display:flex;flex-direction:row;justify-content:center}
+.ot-branch{display:flex;flex-direction:column;align-items:center;position:relative;padding:20px 10px 0}
+.ot-branch::before{content:'';position:absolute;top:0;height:2px;background:var(--n3)}
+.ot-branch:only-child::before{display:none}
+.ot-branch:first-child:not(:only-child)::before{left:calc(50%);right:0}
+.ot-branch:last-child:not(:only-child)::before{left:0;right:calc(50%)}
+.ot-branch:not(:first-child):not(:last-child)::before{left:0;right:0}
+.ot-branch::after{content:'';position:absolute;top:0;left:50%;width:2px;height:20px;background:var(--n3);transform:translateX(-50%)}
+
+/* Tree member card */
+.tm-card{background:var(--wh);border:1px solid var(--n2);border-radius:var(--rad);box-shadow:var(--shadow);padding:14px 14px 12px;width:180px;cursor:default;transition:box-shadow .2s,transform .2s;position:relative;text-align:center}
+.tm-card:focus{outline:3px solid var(--acc);outline-offset:2px}
+.tm-card.lv0{border-top:3px solid var(--p);width:200px}
+.tm-card.lv1{border-top:3px solid var(--acc)}
+.tm-card.lv2{border-top:3px solid var(--p2)}
+.tm-card.lv3{border-top:3px solid var(--g)}
+.tm-ava{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff;margin:0 auto 10px;flex-shrink:0}
+.tm-ava.lv0{background:linear-gradient(135deg,var(--p) 0%,var(--p2) 100%)}
+.tm-ava.lv1{background:linear-gradient(135deg,var(--acc) 0%,var(--accent-light) 100%)}
+.tm-ava.lv2{background:linear-gradient(135deg,var(--p2) 0%,var(--primary-light) 100%)}
+.tm-ava.lv3{background:linear-gradient(135deg,var(--g) 0%,#2AA367 100%)}
+.tm-name{font-size:.82rem;font-weight:800;color:var(--n9);margin-bottom:2px;line-height:1.3}
+.tm-title{font-size:.65rem;color:var(--n5);line-height:1.4;margin-bottom:7px}
+.tm-dept-tag{display:inline-flex;padding:2px 8px;border-radius:99px;font-size:.58rem;font-weight:700;background:var(--p3);color:var(--p2)}
+.tm-edit-btn{position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:5px;background:var(--n1);border:1px solid var(--n2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;padding:0;font-family:'Cairo',sans-serif}
+.tm-edit-btn:hover{background:var(--p);border-color:var(--p)}
+.tm-edit-btn:hover svg{color:#fff}
+.tm-edit-btn svg{width:10px;height:10px;color:var(--n5)}
+.tm-edit-btn:focus{outline:var(--focus-ring);outline-offset:1px}
+
+/* Team grid view */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.tg-card{background:var(--wh);border:1px solid var(--n2);border-radius:var(--rad);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
+.tg-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.tg-accent{height:4px;flex-shrink:0}
+.tg-accent.lv0{background:linear-gradient(90deg,var(--p),var(--p2))}
+.tg-accent.lv1{background:linear-gradient(90deg,var(--acc),var(--accent-light))}
+.tg-accent.lv2{background:linear-gradient(90deg,var(--p2),var(--primary-light))}
+.tg-accent.lv3{background:linear-gradient(90deg,var(--g),#2AA367)}
+.tg-top{padding:16px 14px 12px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--n1)}
+.tg-ava{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:900;color:#fff;flex-shrink:0}
+.tg-ava.lv0{background:linear-gradient(135deg,var(--p) 0%,var(--p2) 100%)}
+.tg-ava.lv1{background:linear-gradient(135deg,var(--acc) 0%,var(--accent-light) 100%)}
+.tg-ava.lv2{background:linear-gradient(135deg,var(--p2) 0%,var(--primary-light) 100%)}
+.tg-ava.lv3{background:linear-gradient(135deg,var(--g) 0%,#2AA367 100%)}
+.tg-meta{flex:1;min-width:0}
+.tg-name{font-size:.88rem;font-weight:800;color:var(--n9);margin-bottom:2px}
+.tg-title{font-size:.7rem;color:var(--n5);margin-bottom:6px;line-height:1.4}
+.tg-dept{display:inline-flex;padding:2px 8px;border-radius:99px;font-size:.6rem;font-weight:700;background:var(--p3);color:var(--p2)}
+.tg-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:7px}
+.tg-contact{display:flex;align-items:center;gap:7px;font-size:.71rem;color:var(--n7)}
+.tg-contact svg{width:12px;height:12px;color:var(--n4);flex-shrink:0}
+.tg-contact a{color:var(--p)}
+.tg-contact a:hover{text-decoration:underline}
+.tg-reports{padding:9px 14px;border-top:1px solid var(--n1);background:var(--n0)}
+.tg-reports-lbl{font-size:.57rem;font-weight:700;color:var(--n4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.tg-report-chip{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:99px;font-size:.63rem;font-weight:600;background:var(--p3);color:var(--p);margin:2px;border:1px solid var(--p4)}
+.tg-report-chip::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--p);flex-shrink:0}
+.tg-admin-bar{padding:8px 14px;border-top:1px solid var(--n1);display:flex;gap:5px;justify-content:flex-end}
+.tg-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:5px;font-size:.67rem;font-weight:700;cursor:pointer;transition:all .12s;font-family:'Cairo',sans-serif;border:1px solid}
+.tg-edit{background:var(--p3);color:var(--p);border-color:var(--p4)}
+.tg-edit:hover{background:var(--p);color:#fff;border-color:var(--p)}
+.tg-del{background:var(--r2);color:var(--r);border-color:var(--r2)}
+.tg-del:hover{background:var(--r);color:#fff;border-color:var(--r)}
+.tg-btn svg,.tg-btn-icon{width:10px;height:10px}
+
+/* Team member modal */
+.team-modal-ava{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--p),var(--p2));margin:0 auto 16px;transition:background .3s}
 
 /* ── LOGIN SCREEN ── */
 #loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0A2A4A 0%,#0F3D68 50%,#1A5491 100%);display:flex;align-items:center;justify-content:center}
@@ -949,7 +984,7 @@ a{text-decoration:none;color:inherit}
 <body>
 
 <!-- LOGIN SCREEN -->
-<div id="loginScreen">
+<div id="loginScreen" class="hide">
   <div class="login-wrap">
     <div class="login-brand">
       <div class="login-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
@@ -1147,9 +1182,32 @@ a{text-decoration:none;color:inherit}
 
       <!-- TEAM STRUCTURE -->
       <div class="page" id="pg-team">
-        <div class="ph"><div class="ph-l"><div class="pt"><div class="pt-icon ib"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>هيكل الفريق</div><div class="pd">هيكل فريق التحول الرقمي وتسلسل القيادة</div></div></div>
-        <div class="ph-r admin-only"><button class="btn-sm btn-primary" onclick="window.editTeamStructure()"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" transform="rotate(-90 10 10)"/></svg>تعديل الهيكل</button></div></div>
-        <div id="teamContent" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px"></div>
+        <div class="ph">
+          <div class="ph-l">
+            <div class="pt"><div class="pt-icon ib"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>هيكل الفريق</div>
+            <div class="pd">هيكل فريق التحول الرقمي وتسلسل القيادة</div>
+          </div>
+          <div class="ph-r" style="align-items:center;gap:8px">
+            <div class="team-view-tabs" role="group" aria-label="طريقة العرض">
+              <button class="team-vtab on" id="vbtnTree" onclick="window.setTeamView('tree')" aria-pressed="true">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm6 0a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1V4zm-6 6a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1H4a1 1 0 01-1-1v-1zm6 0a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1zm6-6a1 1 0 011-1h1a1 1 0 011 1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1V4z"/></svg>
+                هيكلي
+              </button>
+              <button class="team-vtab" id="vbtnGrid" onclick="window.setTeamView('grid')" aria-pressed="false">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zm2 6a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/></svg>
+                بطاقات
+              </button>
+            </div>
+            <button class="btn-sm btn-primary admin-only" onclick="window.openTeamModal(null)" aria-label="إضافة عضو جديد">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+              إضافة عضو
+            </button>
+          </div>
+        </div>
+        <div class="team-toolbar">
+          <div class="team-stats-row" id="teamStatsRow"></div>
+        </div>
+        <div id="teamContent"></div>
       </div>
 
       <!-- PERSPECTIVES -->
@@ -1651,6 +1709,7 @@ async function handleUser(user) {
   } catch(err) {
     console.error('[AUTH ERROR]', err.message, err);
     hideOv();
+    document.getElementById('loginScreen').classList.remove('hide');
     showLoginErr('خطأ: ' + err.message);
   }
 }
@@ -2429,156 +2488,374 @@ function renderOwners() {
 }
 
 // ── TEAM STRUCTURE ──────────────────────────────
-let TEAM = []; // Array to hold team structure data
+let TEAM = [];
+let TEAM_VIEW = 'tree'; // 'tree' | 'grid'
+
+function tmInitials(name) {
+  if (!name) return '؟';
+  const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return parts[0][0] + parts[1][0];
+  return parts[0]?.[0] || '؟';
+}
+
+function tmLevel(member) {
+  let lvl = 0, cur = member;
+  while (cur.parentId) {
+    const p = TEAM.find(m => m.id === cur.parentId);
+    if (!p) break;
+    lvl++;
+    cur = p;
+  }
+  return Math.min(lvl, 3);
+}
+
+function tmMaxDepth() {
+  if (!TEAM.length) return 0;
+  return Math.max(...TEAM.map(m => tmLevel(m)));
+}
 
 function renderTeam() {
-  var el = document.getElementById('teamContent');
-  if (!el) return;
-
-  // Default team structure if empty
   if (!TEAM || TEAM.length === 0) {
     TEAM = [
-      {id:'ceo', name:'المدير العام', title:'Chief Executive Officer', email:'ceo@organization.sa', phone:'+966-1-XXXX-XXXX', department:'الإدارة العليا', color:'var(--primary)'},
-      {id:'director-dtt', name:'مدير التحول الرقمي', title:'Digital Transformation Director', email:'director@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--accent)', parentId:'ceo'},
-      {id:'manager-tech', name:'مدير التقنية', title:'Technology Manager', email:'tech@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--primary-mid)', parentId:'director-dtt'},
-      {id:'manager-ops', name:'مدير العمليات', title:'Operations Manager', email:'ops@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--primary-mid)', parentId:'director-dtt'},
-      {id:'manager-change', name:'مدير إدارة التغيير', title:'Change Management Manager', email:'change@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--primary-mid)', parentId:'director-dtt'}
+      {id:'ceo',           name:'المدير العام',          title:'Chief Executive Officer',          email:'ceo@oaaaqa.gov.om',       phone:'+968-XXXX-XXXX', department:'الإدارة العليا'},
+      {id:'dir-dtt',       name:'مدير التحول الرقمي',    title:'Digital Transformation Director',  email:'director@oaaaqa.gov.om',  phone:'+968-XXXX-XXXX', department:'التحول الرقمي',  parentId:'ceo'},
+      {id:'mgr-tech',      name:'مدير التقنية',          title:'Technology Manager',               email:'tech@oaaaqa.gov.om',      phone:'+968-XXXX-XXXX', department:'التحول الرقمي',  parentId:'dir-dtt'},
+      {id:'mgr-ops',       name:'مدير العمليات',         title:'Operations Manager',               email:'ops@oaaaqa.gov.om',       phone:'+968-XXXX-XXXX', department:'التحول الرقمي',  parentId:'dir-dtt'},
+      {id:'mgr-change',    name:'مدير إدارة التغيير',    title:'Change Management Manager',        email:'change@oaaaqa.gov.om',    phone:'+968-XXXX-XXXX', department:'التحول الرقمي',  parentId:'dir-dtt'}
     ];
   }
 
-  var html = '';
-  
-  // Build hierarchy tree
-  var rootMembers = TEAM.filter(m => !m.parentId);
-  
-  function renderMember(member, level = 0) {
+  // Render stats
+  const statsEl = document.getElementById('teamStatsRow');
+  if (statsEl) {
+    const depts = new Set(TEAM.map(m => m.department)).size;
+    const depth = tmMaxDepth() + 1;
+    statsEl.innerHTML =
+      '<div class="team-stat"><span class="team-stat-v">' + TEAM.length + '</span><span class="team-stat-l">عدد الأعضاء</span></div>' +
+      '<div class="team-stat"><span class="team-stat-v">' + depts + '</span><span class="team-stat-l">إدارة / قسم</span></div>' +
+      '<div class="team-stat"><span class="team-stat-v">' + depth + '</span><span class="team-stat-l">مستويات قيادية</span></div>';
+  }
+
+  const el = document.getElementById('teamContent');
+  if (!el) return;
+  el.innerHTML = '';
+
+  if (TEAM_VIEW === 'tree') {
+    el.appendChild(buildTeamTree());
+  } else {
+    el.appendChild(buildTeamGrid());
+  }
+}
+
+// ── Tree view ──
+function buildTeamTree() {
+  const wrap = document.createElement('div');
+  wrap.className = 'org-wrap';
+  const tree = document.createElement('div');
+  tree.className = 'org-tree';
+  wrap.appendChild(tree);
+
+  const roots = TEAM.filter(m => !m.parentId);
+  if (roots.length === 0) {
+    const msg = document.createElement('p');
+    msg.style.cssText = 'color:var(--n4);text-align:center;padding:40px';
+    msg.textContent = 'لم يتم تعريف هيكل الفريق بعد.';
+    tree.appendChild(msg);
+    return wrap;
+  }
+
+  roots.forEach(root => tree.appendChild(buildTreeNode(root, 0)));
+  return wrap;
+}
+
+function buildTreeNode(member, level) {
+  const node = document.createElement('div');
+  node.className = 'ot-node';
+
+  // Card
+  const card = document.createElement('div');
+  card.className = 'tm-card lv' + level;
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('aria-label', member.name + ' — ' + member.title);
+
+  const ava = document.createElement('div');
+  ava.className = 'tm-ava lv' + level;
+  ava.setAttribute('aria-hidden', 'true');
+  ava.textContent = tmInitials(member.name);
+
+  const nameEl = document.createElement('div');
+  nameEl.className = 'tm-name';
+  nameEl.textContent = member.name;
+
+  const titleEl = document.createElement('div');
+  titleEl.className = 'tm-title';
+  titleEl.textContent = member.title;
+
+  const deptEl = document.createElement('div');
+  deptEl.className = 'tm-dept-tag';
+  deptEl.textContent = member.department;
+
+  // Admin edit button
+  const editBtn = document.createElement('button');
+  editBtn.className = 'tm-edit-btn admin-only';
+  editBtn.setAttribute('aria-label', 'تعديل ' + member.name);
+  editBtn.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>';
+  editBtn.addEventListener('click', function(e) { e.stopPropagation(); window.openTeamModal(member.id); });
+  // Apply current admin visibility
+  if (ROLE !== 'admin') editBtn.style.display = 'none';
+
+  card.appendChild(editBtn);
+  card.appendChild(ava);
+  card.appendChild(nameEl);
+  card.appendChild(titleEl);
+  card.appendChild(deptEl);
+  node.appendChild(card);
+
+  const children = TEAM.filter(m => m.parentId === member.id);
+  if (children.length > 0) {
+    const vline = document.createElement('div');
+    vline.className = 'ot-vline';
+    node.appendChild(vline);
+
+    const childRow = document.createElement('div');
+    childRow.className = 'ot-children';
+
+    children.forEach(child => {
+      const branch = document.createElement('div');
+      branch.className = 'ot-branch';
+      branch.appendChild(buildTreeNode(child, Math.min(level + 1, 3)));
+      childRow.appendChild(branch);
+    });
+
+    node.appendChild(childRow);
+  }
+
+  return node;
+}
+
+// ── Grid view ──
+function buildTeamGrid() {
+  const grid = document.createElement('div');
+  grid.className = 'team-grid';
+
+  if (TEAM.length === 0) {
+    const msg = document.createElement('div');
+    msg.style.cssText = 'grid-column:1/-1;text-align:center;padding:40px;color:var(--n4)';
+    msg.textContent = 'لم يتم تعريف هيكل الفريق بعد.';
+    grid.appendChild(msg);
+    return grid;
+  }
+
+  TEAM.forEach(member => {
+    const level = tmLevel(member);
     const children = TEAM.filter(m => m.parentId === member.id);
-    const hasChildren = children.length > 0;
-    
-    var memberHtml = '<div class="card" style="background:linear-gradient(135deg,rgba(255,255,255,.5) 0%,'+member.color+'11 100%);border-left:4px solid '+member.color+';position:relative">';
-    
-    memberHtml += '<div style="padding:16px">';
-    memberHtml += '<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">';
-    memberHtml += '<div>';
-    memberHtml += '<div style="font-size:.95rem;font-weight:800;color:var(--n9)">'+member.name+'</div>';
-    memberHtml += '<div style="font-size:.75rem;color:'+member.color+';font-weight:700;margin-top:2px">'+member.title+'</div>';
-    memberHtml += '<div style="font-size:.65rem;color:var(--n4);margin-top:3px">'+member.department+'</div>';
-    memberHtml += '</div>';
-    memberHtml += (ROLE==='admin'?'<button class="btn-sm btn-ghost" onclick="window.editTeamMember(\''+member.id+'\')" style="padding:4px 8px"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg></button>':'');
-    memberHtml += '</div>';
-    
-    memberHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.7rem">';
-    memberHtml += '<div><span style="color:var(--n4)">البريد:</span><br><a href="mailto:'+member.email+'" style="color:var(--primary);text-decoration:underline">'+member.email+'</a></div>';
-    memberHtml += '<div><span style="color:var(--n4)">الهاتف:</span><br>'+member.phone+'</div>';
-    memberHtml += '</div>';
-    
-    if (hasChildren) {
-      memberHtml += '<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--n2)"><div style="font-size:.65rem;font-weight:700;color:var(--n5);margin-bottom:10px;text-transform:uppercase">المرؤوسون المباشرون</div>';
+    const isAdmin = ROLE === 'admin';
+
+    const card = document.createElement('div');
+    card.className = 'tg-card';
+
+    const accent = document.createElement('div');
+    accent.className = 'tg-accent lv' + level;
+
+    const top = document.createElement('div');
+    top.className = 'tg-top';
+
+    const ava = document.createElement('div');
+    ava.className = 'tg-ava lv' + level;
+    ava.setAttribute('aria-hidden', 'true');
+    ava.textContent = tmInitials(member.name);
+
+    const meta = document.createElement('div');
+    meta.className = 'tg-meta';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'tg-name';
+    nameEl.textContent = member.name;
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'tg-title';
+    titleEl.textContent = member.title;
+
+    const dept = document.createElement('div');
+    dept.className = 'tg-dept';
+    dept.textContent = member.department;
+
+    meta.appendChild(nameEl);
+    meta.appendChild(titleEl);
+    meta.appendChild(dept);
+    top.appendChild(ava);
+    top.appendChild(meta);
+
+    const body = document.createElement('div');
+    body.className = 'tg-body';
+
+    if (member.email) {
+      const emailRow = document.createElement('div');
+      emailRow.className = 'tg-contact';
+      emailRow.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>';
+      const a = document.createElement('a');
+      a.href = 'mailto:' + member.email;
+      a.textContent = member.email;
+      emailRow.appendChild(a);
+      body.appendChild(emailRow);
+    }
+
+    if (member.phone) {
+      const phoneRow = document.createElement('div');
+      phoneRow.className = 'tg-contact';
+      phoneRow.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>';
+      const span = document.createElement('span');
+      span.textContent = member.phone;
+      phoneRow.appendChild(span);
+      body.appendChild(phoneRow);
+    }
+
+    card.appendChild(accent);
+    card.appendChild(top);
+    card.appendChild(body);
+
+    if (children.length > 0) {
+      const reports = document.createElement('div');
+      reports.className = 'tg-reports';
+      const lbl = document.createElement('div');
+      lbl.className = 'tg-reports-lbl';
+      lbl.textContent = 'المرؤوسون المباشرون';
+      reports.appendChild(lbl);
       children.forEach(child => {
-        memberHtml += '<div style="font-size:.75rem;padding:8px;background:var(--n0);border-radius:6px;margin-bottom:6px;display:flex;align-items:center;gap:6px">';
-        memberHtml += '<div style="width:3px;height:3px;border-radius:50%;background:'+child.color+'"></div>';
-        memberHtml += '<span>'+child.name+' <span style="color:var(--n4)">('+child.title+')</span></span>';
-        memberHtml += '</div>';
+        const chip = document.createElement('span');
+        chip.className = 'tg-report-chip';
+        chip.textContent = child.name;
+        reports.appendChild(chip);
       });
-      memberHtml += '</div>';
+      card.appendChild(reports);
     }
-    
-    memberHtml += '</div>';
-    return memberHtml;
-  }
-  
-  rootMembers.forEach(member => {
-    html += renderMember(member);
+
+    if (isAdmin) {
+      const adminBar = document.createElement('div');
+      adminBar.className = 'tg-admin-bar';
+      const editBtn = document.createElement('button');
+      editBtn.className = 'tg-btn tg-edit';
+      editBtn.setAttribute('aria-label', 'تعديل ' + member.name);
+      editBtn.innerHTML = '<svg viewBox="0 0 20 20" fill="currentColor" class="tg-btn-icon"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg> تعديل';
+      editBtn.addEventListener('click', () => window.openTeamModal(member.id));
+      adminBar.appendChild(editBtn);
+      card.appendChild(adminBar);
+    }
+
+    grid.appendChild(card);
   });
-  
-  if (html === '') {
-    html = '<div class="card card-p" style="grid-column:1/-1;text-align:center"><p style="color:var(--n4)">لم يتم تعريف هيكل الفريق بعد. اطلب من المسؤول تكوين الهيكل.</p></div>';
-  }
-  
-  el.innerHTML = html;
+
+  return grid;
 }
 
-function editTeamMember(memberId) {
-  const member = TEAM.find(m => m.id === memberId);
-  if (!member) return;
-  
-  const newName = prompt('اسم الموظف:', member.name);
-  if (newName !== null) {
-    member.name = newName;
-    const newTitle = prompt('المسمى الوظيفي:', member.title);
-    if (newTitle !== null) {
-      member.title = newTitle;
-      const newEmail = prompt('البريد الإلكتروني:', member.email);
-      if (newEmail !== null) {
-        member.email = newEmail;
-        const newPhone = prompt('رقم الهاتف:', member.phone);
-        if (newPhone !== null) {
-          member.phone = newPhone;
-          saveTeamStructure();
-          renderTeam();
-          toast('تم تحديث بيانات الموظف ✅', 'ok');
-        }
-      }
-    }
-  }
-}
+// ── View toggle ──
+window.setTeamView = function(v) {
+  TEAM_VIEW = v;
+  document.getElementById('vbtnTree').classList.toggle('on', v === 'tree');
+  document.getElementById('vbtnTree').setAttribute('aria-pressed', v === 'tree');
+  document.getElementById('vbtnGrid').classList.toggle('on', v === 'grid');
+  document.getElementById('vbtnGrid').setAttribute('aria-pressed', v === 'grid');
+  renderTeam();
+};
 
-function editTeamStructure() {
-  if (ROLE !== 'admin') {
-    toast('هذه الميزة متاحة فقط للمسؤول', 'err');
-    return;
-  }
-  
-  const newMemberName = prompt('إضافة موظف جديد - الاسم:');
-  if (newMemberName === null || newMemberName.trim() === '') return;
-  
-  const newTitle = prompt('المسمى الوظيفي:');
-  if (newTitle === null) return;
-  
-  const newEmail = prompt('البريد الإلكتروني:');
-  if (newEmail === null) return;
-  
-  const newPhone = prompt('رقم الهاتف:');
-  if (newPhone === null) return;
-  
-  const newDept = prompt('القسم:');
-  if (newDept === null) return;
-  
-  const newId = 'user-' + Date.now();
-  TEAM.push({
-    id: newId,
-    name: newMemberName,
-    title: newTitle,
-    email: newEmail,
-    phone: newPhone,
-    department: newDept,
-    color: 'var(--primary-mid)',
-    parentId: 'director-dtt'
+// ── Modal ──
+window.openTeamModal = function(memberId) {
+  if (ROLE !== 'admin') { toast('هذه الميزة متاحة للمسؤول فقط', 'err'); return; }
+
+  const modal = document.getElementById('teamModal');
+  const isNew = !memberId;
+  const member = memberId ? TEAM.find(m => m.id === memberId) : null;
+
+  document.getElementById('teamModalTitle').textContent = isNew ? 'إضافة عضو جديد' : 'تعديل بيانات العضو';
+  document.getElementById('teamModalSub').textContent = isNew ? 'أدخل بيانات العضو في فريق التحول الرقمي' : 'تعديل بيانات: ' + (member?.name || '');
+  document.getElementById('tmId').value = memberId || '';
+  document.getElementById('tmName').value = member?.name || '';
+  document.getElementById('tmTitle').value = member?.title || '';
+  document.getElementById('tmEmail').value = member?.email || '';
+  document.getElementById('tmPhone').value = member?.phone || '';
+  document.getElementById('tmDept').value = member?.department || '';
+
+  // Populate parent select
+  const sel = document.getElementById('tmParent');
+  sel.innerHTML = '<option value="">— لا يوجد (قيادة عليا) —</option>';
+  TEAM.filter(m => m.id !== memberId).forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.name + ' (' + m.title + ')';
+    if (m.id === member?.parentId) opt.selected = true;
+    sel.appendChild(opt);
   });
-  
+
+  // Avatar preview
+  window.updateTeamModalAva();
+
+  // Show/hide delete button
+  document.getElementById('tmDeleteBtn').style.display = isNew ? 'none' : '';
+
+  modal.classList.remove('hide');
+  setTimeout(() => document.getElementById('tmName').focus(), 50);
+};
+
+window.closeTeamModal = function() {
+  document.getElementById('teamModal').classList.add('hide');
+};
+
+window.updateTeamModalAva = function() {
+  const name = document.getElementById('tmName').value;
+  document.getElementById('teamModalAva').textContent = tmInitials(name) || '؟';
+};
+
+window.saveTeamMember = function() {
+  const name  = document.getElementById('tmName').value.trim();
+  const title = document.getElementById('tmTitle').value.trim();
+  if (!name || !title) { toast('الاسم والمسمى الوظيفي مطلوبان', 'err'); return; }
+
+  const id       = document.getElementById('tmId').value;
+  const email    = document.getElementById('tmEmail').value.trim();
+  const phone    = document.getElementById('tmPhone').value.trim();
+  const dept     = document.getElementById('tmDept').value.trim();
+  const parentId = document.getElementById('tmParent').value || null;
+
+  if (id) {
+    const m = TEAM.find(m => m.id === id);
+    if (m) { m.name = name; m.title = title; m.email = email; m.phone = phone; m.department = dept; m.parentId = parentId; }
+  } else {
+    TEAM.push({ id: 'tm-' + Date.now(), name, title, email, phone, department: dept, parentId });
+  }
+
   saveTeamStructure();
   renderTeam();
-  toast('تم إضافة الموظف بنجاح ✅', 'ok');
-}
+  window.closeTeamModal();
+  toast(id ? 'تم تحديث بيانات العضو' : 'تمت إضافة العضو بنجاح', 'ok');
+};
+
+window.deleteTeamMember = function() {
+  const id = document.getElementById('tmId').value;
+  if (!id) return;
+  const member = TEAM.find(m => m.id === id);
+  if (!member) return;
+  // Reassign children to parent of deleted member
+  TEAM.filter(m => m.parentId === id).forEach(m => { m.parentId = member.parentId || null; });
+  TEAM = TEAM.filter(m => m.id !== id);
+  saveTeamStructure();
+  renderTeam();
+  window.closeTeamModal();
+  toast('تم حذف العضو', 'ok');
+};
 
 function saveTeamStructure() {
-  try {
-    localStorage.setItem('dtt_team_structure', JSON.stringify(TEAM));
-  } catch(e) {
-    console.error('Error saving team structure:', e);
-  }
+  try { localStorage.setItem('dtt_team_structure', JSON.stringify(TEAM)); }
+  catch(e) { console.error('Error saving team structure:', e); }
 }
 
 function loadTeamStructure() {
   try {
     const saved = localStorage.getItem('dtt_team_structure');
-    if (saved) {
-      TEAM = JSON.parse(saved);
-    }
-  } catch(e) {
-    console.error('Error loading team structure:', e);
-  }
+    if (saved) TEAM = JSON.parse(saved);
+  } catch(e) { console.error('Error loading team structure:', e); }
 }
+
+// Escape to close team modal (attached after DOM ready via bindUI above)
 
 // ── SIDEBAR ──────────────────────────────────────
 function toggleSb() {
@@ -2624,6 +2901,16 @@ function bindUI() {
   // Enter key on login
   $('loginPass')?.addEventListener('keydown', e => { if (e.key === 'Enter') window.signInEmail(); });
   $('loginEmail')?.addEventListener('keydown', e => { if (e.key === 'Enter') $('loginPass')?.focus(); });
+
+  // Team modal — backdrop click and Escape key
+  $('teamModal')?.addEventListener('click', function(e) {
+    if (e.target === this) window.closeTeamModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && $('teamModal') && !$('teamModal').classList.contains('hide')) {
+      window.closeTeamModal();
+    }
+  });
 
   // Reset password modal
   $('resetCancelBtn')?.addEventListener('click', function() {
@@ -2673,8 +2960,7 @@ window.go             = go;
 window.toggleSb       = toggleSb;
 window.closeSb        = closeSb;
 window.setUserRole    = setUserRole;
-window.editTeamStructure = editTeamStructure;
-window.editTeamMember = editTeamMember;
+// editTeamStructure / editTeamMember replaced by openTeamModal
 window.renderTeam     = renderTeam;
 window.signInEmail    = signInEmail;
 window.doLogout       = doLogout;
@@ -2685,8 +2971,7 @@ window.go             = go;
 window.toggleSb       = toggleSb;
 window.closeSb        = closeSb;
 window.setUserRole    = setUserRole;
-window.editTeamStructure = editTeamStructure;
-window.editTeamMember = editTeamMember;
+// editTeamStructure / editTeamMember replaced by openTeamModal
 window.renderTeam     = renderTeam;
 
 // Flush any queued calls from before module loaded
@@ -2694,7 +2979,7 @@ if (window.__dtccFlush) {
   window.__dtccFlush({
     signInGoogle, signInEmail, doLogout, syncData,
     createUser, changePassword, go, toggleSb, closeSb, setUserRole,
-    editTeamStructure, editTeamMember, renderTeam
+    renderTeam
   });
 }
 
@@ -2708,6 +2993,56 @@ if (document.readyState === 'loading') {
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+
+<!-- TEAM MEMBER MODAL -->
+<div class="modal-overlay hide" id="teamModal" role="dialog" aria-modal="true" aria-labelledby="teamModalTitle">
+  <div class="modal-box" style="width:460px;max-width:93vw">
+    <div class="team-modal-ava" id="teamModalAva" aria-hidden="true">؟</div>
+    <div class="modal-title" id="teamModalTitle">إضافة عضو جديد</div>
+    <div class="modal-sub" id="teamModalSub">أدخل بيانات العضو في فريق التحول الرقمي</div>
+    <input type="hidden" id="tmId">
+    <div class="frow">
+      <div class="ff">
+        <label class="fl" for="tmName">الاسم الكامل *</label>
+        <input class="fi" id="tmName" type="text" placeholder="اسم الموظف" oninput="window.updateTeamModalAva()" autocomplete="off">
+      </div>
+      <div class="ff">
+        <label class="fl" for="tmTitle">المسمى الوظيفي *</label>
+        <input class="fi" id="tmTitle" type="text" placeholder="مثال: مدير التحول الرقمي">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ff">
+        <label class="fl" for="tmEmail">البريد الإلكتروني</label>
+        <input class="fi" id="tmEmail" type="email" placeholder="name@oaaaqa.gov.om" autocomplete="off">
+      </div>
+      <div class="ff">
+        <label class="fl" for="tmPhone">رقم الهاتف</label>
+        <input class="fi" id="tmPhone" type="tel" placeholder="+968-XXXX-XXXX">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ff">
+        <label class="fl" for="tmDept">القسم / الإدارة</label>
+        <input class="fi" id="tmDept" type="text" placeholder="مثال: التحول الرقمي">
+      </div>
+      <div class="ff">
+        <label class="fl" for="tmParent">يرفع إلى (المسؤول المباشر)</label>
+        <select class="fi fsel" id="tmParent">
+          <option value="">— لا يوجد (قيادة عليا) —</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" id="tmDeleteBtn" onclick="window.deleteTeamMember()" style="margin-left:auto;background:var(--r2);color:var(--r);border:1px solid var(--r2)" aria-label="حذف العضو">
+        <svg viewBox="0 0 20 20" fill="currentColor" style="width:12px;height:12px"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        حذف
+      </button>
+      <button class="btn-sm btn-ghost" onclick="window.closeTeamModal()" aria-label="إلغاء">إلغاء</button>
+      <button class="btn-sm btn-primary" onclick="window.saveTeamMember()" aria-label="حفظ العضو">حفظ</button>
+    </div>
+  </div>
+</div>
 
 <!-- RESET PASSWORD MODAL -->
 <div class="modal-overlay hide" id="resetModal">
