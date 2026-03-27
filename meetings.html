@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>نظام إدارة الاجتماعات — OAAAQA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0F3D68;--navy-mid:#1A5491;--navy-light:#2F6DB5;--navy-pale:#EBF3FB;--navy-dark:#0A2847;
+  --gold:#C8922A;--gold-light:#D7B15F;--gold-pale:#FDF4E3;
+  --green:#1A7A4A;--green-pale:#E6F5ED;--green-dark:#0F4D2E;
+  --red:#C0392B;--red-pale:#FDECEA;
+  --orange:#D97706;--orange-pale:#FEF3C7;
+  --purple:#5B2D8E;--purple-pale:#EDE9FE;
+  --white:#FFF;--bg:#EEF2F7;
+  --g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;
+  --g400:#94A3B8;--g500:#64748B;--g600:#475569;--g700:#334155;--g900:#0F172A;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,.1),0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 32px rgba(0,0,0,.12);
+  --r:12px;--r-sm:8px;--r-lg:16px;
+  --sw:256px;--hh:56px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--g900);direction:rtl;min-height:100vh}
+button,input,select,textarea{font-family:'Cairo',sans-serif}
+button{cursor:pointer;border:none;background:none}
+img{max-width:100%}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh}
+.sb{position:fixed;right:0;top:0;width:var(--sw);height:100vh;
+  background:linear-gradient(175deg,var(--navy-dark) 0%,#0F3D68 55%,#1A5491 100%);
+  display:flex;flex-direction:column;z-index:400;
+  border-left:1px solid rgba(255,255,255,.06)}
+.main{margin-right:var(--sw);flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* ── SIDEBAR ── */
+.sb-brand{padding:15px 14px 11px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:9px}
+.sb-logo{width:34px;height:34px;border-radius:9px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(200,146,42,.4)}
+.sb-logo svg{width:16px;height:16px;color:#fff}
+.sb-title{font-size:.76rem;font-weight:800;color:#fff;line-height:1.3}
+.sb-sub{font-size:.58rem;color:rgba(255,255,255,.28);margin-top:1px}
+
+/* Stats */
+.sb-stats{margin:9px 11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:9px 10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.ss{text-align:center}
+.ss-v{font-size:1.25rem;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--gold-light);display:block;line-height:1}
+.ss-l{font-size:.55rem;color:rgba(255,255,255,.28);display:block;margin-top:2px;line-height:1.3}
+
+/* Nav */
+.sb-nav{flex:1;overflow-y:auto;padding:4px 0;scrollbar-width:none}
+.sb-nav::-webkit-scrollbar{display:none}
+.nb-grp{font-size:.57rem;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.08em;padding:9px 13px 2px;display:block}
+.nb{display:flex;align-items:center;gap:7px;padding:7px 13px;width:100%;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.45);border-right:2px solid transparent;transition:all .15s;text-align:right;position:relative}
+.nb:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
+.nb.on{color:#fff;font-weight:700;background:rgba(200,146,42,.1);border-right-color:var(--gold)}
+.nb svg{width:13px;height:13px;flex-shrink:0;opacity:.7}
+.nb.on svg{opacity:1}
+.nb-cnt{margin-right:auto;background:var(--red);color:#fff;font-size:.58rem;font-weight:800;padding:1px 6px;border-radius:99px;min-width:16px;text-align:center;line-height:1.4}
+.nb-cnt.gold{background:var(--gold)}
+.nb-sep{height:1px;background:rgba(255,255,255,.05);margin:3px 11px}
+
+.sb-foot{padding:9px 13px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between}
+.sb-user{font-size:.62rem;color:rgba(255,255,255,.3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-logout{font-size:.6rem;color:rgba(255,255,255,.2);padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.08);background:none;cursor:pointer;transition:all .15s}
+.btn-logout:hover{color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.2)}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--hh);background:var(--white);border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;padding:0 18px;box-shadow:var(--shadow);position:sticky;top:0;z-index:200}
+.tb-title{font-size:.92rem;font-weight:800;color:var(--g900)}
+.tb-r{display:flex;align-items:center;gap:7px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--r-sm);font-size:.74rem;font-weight:700;transition:all .15s;cursor:pointer;border:none;white-space:nowrap}
+.btn svg{width:12px;height:12px;flex-shrink:0}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:var(--navy-mid)}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:#a67820}
+.btn-green{background:var(--green-pale);color:var(--green);border:1px solid rgba(26,122,74,.15)}
+.btn-green:hover{background:#c8edd9}
+.btn-red{background:var(--red-pale);color:var(--red);border:1px solid rgba(192,57,43,.15)}
+.btn-ghost{background:transparent;color:var(--g500);border:1px solid var(--g200)}
+.btn-ghost:hover{background:var(--g100);color:var(--g700)}
+.btn-sm{padding:4px 10px;font-size:.69rem}
+.btn-xs{padding:3px 8px;font-size:.64rem}
+
+/* ── CONTENT ── */
+.content{flex:1;padding:18px;padding-bottom:60px}
+.page{display:none}
+.page.on{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION HEADERS ── */
+.sec-hd{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.sec-hd-bar{width:4px;height:20px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.sec-hd-text{font-size:.9rem;font-weight:800;color:var(--g900);flex:1}
+.sec-hd-sub{font-size:.7rem;color:var(--g500)}
+
+/* ── KPI GRID ── */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kcard{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);transition:box-shadow .15s,transform .15s}
+.kcard:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.kico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kico svg{width:17px;height:17px}
+.kv{font-size:1.45rem;font-weight:900;font-family:'IBM Plex Mono',monospace;display:block;line-height:1;color:var(--g900)}
+.kl{font-size:.62rem;color:var(--g500);display:block;margin-top:1px}
+.ki-navy{background:var(--navy-pale);color:var(--navy)}
+.ki-gold{background:var(--gold-pale);color:var(--gold)}
+.ki-green{background:var(--green-pale);color:var(--green)}
+.ki-red{background:var(--red-pale);color:var(--red)}
+.ki-gray{background:var(--g100);color:var(--g600)}
+
+/* ── MEETING CARD ── */
+.mc{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s;cursor:default}
+.mc:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.mc-top-bar{height:3px;width:100%}
+.mc-body{padding:13px 15px 11px}
+.mc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:9px}
+.mc-title{font-size:.85rem;font-weight:800;color:var(--g900);line-height:1.35;flex:1}
+.mc-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:9px}
+.mc-mi{display:flex;align-items:center;gap:3px;font-size:.66rem;color:var(--g500)}
+.mc-mi svg{width:10px;height:10px;flex-shrink:0}
+.mc-footer{display:flex;align-items:center;justify-content:space-between;padding-top:9px;border-top:1px solid var(--g100)}
+.mc-acts-row{display:flex;gap:5px}
+
+/* Type colors */
+.mc-team .mc-top-bar{background:var(--navy)}
+.mc-sub  .mc-top-bar{background:var(--gold)}
+.mc-other.mc-top-bar,.mc-other .mc-top-bar{background:var(--green)}
+
+/* ── BADGES / STATUS ── */
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:.63rem;font-weight:700;gap:3px;white-space:nowrap}
+.bdg::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.st-draft   {background:var(--g100);color:var(--g600)}.st-draft::before{background:var(--g400)}
+.st-review  {background:var(--orange-pale);color:var(--orange)}.st-review::before{background:var(--orange)}
+.st-approved{background:var(--green-pale);color:var(--green-dark)}.st-approved::before{background:var(--green)}
+.st-scheduled{background:var(--navy-pale);color:var(--navy)}.st-scheduled::before{background:var(--navy)}
+.tp-team {background:var(--navy-pale);color:var(--navy)}
+.tp-sub  {background:var(--gold-pale);color:var(--gold)}
+.tp-other{background:var(--green-pale);color:var(--green-dark)}
+.act-open{background:var(--orange-pale);color:var(--orange)}
+.act-wip {background:var(--navy-pale);color:var(--navy)}
+.act-done{background:var(--green-pale);color:var(--green-dark)}
+.act-late{background:var(--red-pale);color:var(--red)}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shadow)}
+.card-p{padding:16px}
+.card-hd{font-size:.8rem;font-weight:800;color:var(--g700);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card-hd svg{color:var(--gold);width:13px;height:13px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ga{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:11px}
+.mb14{margin-bottom:14px}
+
+/* ── DETAIL / MINUTE VIEW ── */
+.detail-hero{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--navy-light) 100%);border-radius:var(--r-lg);padding:22px 24px 20px;margin-bottom:14px;position:relative;overflow:hidden}
+.detail-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+.dh-inner{position:relative;z-index:1}
+.dh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.dh-title{font-size:1.1rem;font-weight:900;color:#fff;line-height:1.3;flex:1}
+.dh-meta{display:flex;flex-wrap:wrap;gap:10px;font-size:.7rem;color:rgba(255,255,255,.6);margin-bottom:14px}
+.dh-meta span{display:flex;align-items:center;gap:4px}
+.dh-meta svg{width:11px;height:11px}
+.dh-actions{display:flex;gap:7px;flex-wrap:wrap}
+
+/* Approval flow */
+.af-wrap{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.af-title{font-size:.75rem;font-weight:800;color:var(--g700);margin-bottom:12px;display:flex;align-items:center;gap:5px}
+.af-title svg{color:var(--gold);width:13px;height:13px}
+.af-flow{display:flex;align-items:center;justify-content:center;gap:0;overflow-x:auto;padding:4px 0}
+.af-step{display:flex;flex-direction:column;align-items:center;min-width:120px;position:relative;flex:1}
+.af-step:not(:last-child)::after{content:'';position:absolute;left:0;top:15px;width:calc(100% - 60px);height:2px;background:var(--g200);margin-left:30px;z-index:0}
+.af-step.done:not(:last-child)::after{background:var(--green)}
+.af-dot{width:32px;height:32px;border-radius:50%;border:2px solid var(--g300);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:var(--g400);margin-bottom:6px;z-index:1;transition:all .2s;position:relative}
+.af-step.done .af-dot{border-color:var(--green);background:var(--green);color:#fff}
+.af-step.active .af-dot{border-color:var(--gold);background:var(--gold-pale);color:var(--gold);box-shadow:0 0 0 4px rgba(200,146,42,.15)}
+.af-name{font-size:.64rem;font-weight:700;color:var(--g500);text-align:center;line-height:1.35}
+.af-step.done .af-name{color:var(--green);font-weight:800}
+.af-step.active .af-name{color:var(--gold);font-weight:800}
+.af-role{font-size:.58rem;color:var(--g400);text-align:center;margin-top:1px}
+
+/* Minute sections */
+.min-sec{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow)}
+.min-sec-hd{padding:9px 14px;background:var(--g50);border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+.min-sec-ht{font-size:.78rem;font-weight:800;color:var(--g700);display:flex;align-items:center;gap:6px}
+.min-sec-ht svg{color:var(--gold);width:12px;height:12px}
+.min-sec-body{padding:12px 14px}
+
+/* Agenda items */
+.ag-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-sm);margin-bottom:5px}
+.ag-num{width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;font-size:.62rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ag-txt{flex:1;font-size:.77rem;color:var(--g700)}
+.ag-del{width:18px;height:18px;border-radius:50%;background:var(--red-pale);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:.7rem;cursor:pointer;border:none;flex-shrink:0}
+.btn-add-ag{width:100%;padding:6px;border:1.5px dashed var(--g300);border-radius:var(--r-sm);background:transparent;color:var(--g500);font-size:.73rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
+.btn-add-ag:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-pale)}
+
+/* Decision items */
+.dec-item{background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:6px}
+.dec-hd{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.dec-num{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:.65rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dec-text{font-size:.79rem;font-weight:700;color:var(--g900);flex:1;line-height:1.4}
+.act-box{background:var(--white);border:1px solid var(--g200);border-radius:var(--r-sm);padding:8px 10px;margin-top:6px}
+.act-box-hd{font-size:.65rem;font-weight:700;color:var(--g500);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.act-box-hd svg{width:10px;height:10px;color:var(--gold)}
+.act-text{font-size:.77rem;color:var(--g700);margin-bottom:5px}
+.act-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.act-meta-item{font-size:.63rem;color:var(--g500);display:flex;align-items:center;gap:3px}
+.act-meta-item svg{width:10px;height:10px}
+
+/* Attendance */
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.att-card{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--g200);border-radius:var(--r-sm);background:var(--g50)}
+.att-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#fff;flex-shrink:0}
+.att-name{font-size:.71rem;font-weight:600;color:var(--g700);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att-type{font-size:.58rem;color:var(--g500)}
+
+/* Archive list */
+.arch-row{background:var(--white);border:1px solid var(--g200);border-radius:var(--r-sm);padding:9px 13px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);transition:box-shadow .15s;cursor:pointer;margin-bottom:5px}
+.arch-row:hover{box-shadow:var(--shadow-md)}
+.arch-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── ACTIONS TABLE ── */
+.tw{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse;font-size:.75rem;min-width:600px}
+.tbl thead{background:var(--g50);border-bottom:2px solid var(--g200)}
+.tbl th{padding:7px 10px;text-align:right;font-weight:700;color:var(--g500);font-size:.65rem;text-transform:uppercase;letter-spacing:.03em}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--g100);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--g50)}
+.tscroll{overflow-x:auto}
+
+/* ── FORM ── */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fg.full{grid-template-columns:1fr}
+.fg.three{grid-template-columns:1fr 1fr 1fr}
+.ff{display:flex;flex-direction:column;gap:3px}
+.fl{font-size:.67rem;font-weight:700;color:var(--g600)}
+.fi,.fsel,.fta{padding:7px 9px;border:1.5px solid var(--g200);border-radius:var(--r-sm);font-size:.8rem;color:var(--g900);background:var(--g50);direction:rtl;transition:border .15s,background .15s}
+.fta{resize:vertical;min-height:68px}
+.fi:focus,.fsel:focus,.fta:focus{outline:none;border-color:var(--navy);background:var(--white)}
+
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;color:var(--g300);gap:8px;text-align:center}
+.empty svg{width:36px;height:36px}
+.empty p{font-size:.78rem;color:var(--g500)}
+.empty small{font-size:.65rem;color:var(--g400)}
+
+/* ── MODAL ── */
+.modal-ov{position:fixed;inset:0;z-index:900;background:rgba(15,23,42,.5);backdrop-filter:blur(5px);display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-ov.hide{display:none}
+.modal{background:var(--white);border-radius:var(--r-lg);width:100%;max-width:720px;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-hd{padding:17px 22px 13px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:10px}
+.modal-hd-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-hd-icon svg{width:13px;height:13px;color:#fff}
+.modal-title{font-size:.9rem;font-weight:800;color:var(--g900);flex:1}
+.modal-close{width:26px;height:26px;border-radius:50%;background:var(--g100);color:var(--g500);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem;border:none;flex-shrink:0}
+.modal-close:hover{background:var(--g200)}
+.modal-body{padding:17px 22px}
+.modal-footer{padding:12px 22px 18px;border-top:1px solid var(--g100);display:flex;justify-content:flex-end;gap:8px}
+
+/* Tabs in modal */
+.modal-tabs{display:flex;border-bottom:2px solid var(--g200);margin-bottom:14px;gap:0}
+.mtab{padding:7px 14px;font-size:.75rem;font-weight:600;color:var(--g500);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.mtab:hover{color:var(--navy)}
+.mtab.on{color:var(--navy);border-bottom-color:var(--navy);font-weight:800}
+
+/* ── LOGIN ── */
+#loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 55%,var(--navy-light) 100%);display:flex;align-items:center;justify-content:center;gap:60px}
+#loginScreen.hide{display:none}
+.login-brand{max-width:320px;color:#fff}
+.login-brand-logo{width:52px;height:52px;border-radius:13px;background:var(--gold);display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 4px 16px rgba(200,146,42,.4)}
+.login-brand-logo svg{width:24px;height:24px;color:#fff}
+.login-brand-title{font-size:1.4rem;font-weight:900;line-height:1.2;margin-bottom:8px}
+.login-brand-sub{font-size:.78rem;color:rgba(255,255,255,.4);line-height:1.7}
+.login-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 26px;width:320px;backdrop-filter:blur(12px)}
+.login-title{font-size:.88rem;font-weight:800;color:#fff;margin-bottom:4px}
+.login-sub{font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:18px}
+.login-err{background:rgba(192,57,43,.18);border:1px solid rgba(192,57,43,.3);border-radius:6px;padding:7px 10px;font-size:.7rem;color:#FCA5A5;margin-bottom:10px;display:none}
+.lf{margin-bottom:9px}
+.ll{font-size:.64rem;font-weight:700;color:rgba(255,255,255,.38);display:block;margin-bottom:3px}
+.li{width:100%;padding:8px 10px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:7px;font-size:.82rem;font-family:'Cairo',sans-serif;color:#fff;direction:rtl;transition:border .15s}
+.li:focus{outline:none;border-color:var(--gold)}
+.li::placeholder{color:rgba(255,255,255,.2)}
+.login-btn{width:100%;padding:9px;background:var(--gold);color:#fff;border-radius:8px;font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:800;border:none;cursor:pointer;transition:background .15s}
+.login-btn:hover{background:#a67820}
+
+/* ── OVERLAY / TOAST ── */
+#ov{position:fixed;inset:0;z-index:8000;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center}
+#ov.hide{display:none}
+.ov-box{background:var(--white);border-radius:12px;padding:22px 26px;text-align:center;box-shadow:var(--shadow-lg)}
+.ov-sp{width:28px;height:28px;border:3px solid var(--g200);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 8px}
+.ov-txt{font-size:.78rem;color:var(--g600)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toaster{position:fixed;bottom:14px;left:14px;z-index:9999;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.toast{background:var(--g900);color:#fff;padding:8px 12px;border-radius:7px;font-size:.72rem;font-weight:600;max-width:270px;box-shadow:var(--shadow-md);animation:fadeUp .2s ease;pointer-events:auto}
+.tok{background:var(--green-dark)}.terr{background:var(--red)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  .sb{transform:translateX(100%);transition:transform .25s}
+  .sb.open{transform:translateX(0)}
+  .main{margin-right:0}
+  .g2,.g3{grid-template-columns:1fr}
+  .ga{grid-template-columns:1fr}
+  .login-brand{display:none}
+  .fg{grid-template-columns:1fr}
+  .fg.three{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<script>
+// Hide login immediately if coming from dashboard
+try {
+  if (localStorage.getItem('oaaaqa_uid') && localStorage.getItem('oaaaqa_email')) {
+    document.addEventListener('DOMContentLoaded', function() {
+      var ls = document.getElementById('loginScreen');
+      if (ls) ls.style.display = 'none';
+    });
+  }
+} catch(e) {}
+</script>
+<div id="loginScreen">
+  <div class="login-brand">
+    <div class="login-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+    <div class="login-brand-title">نظام إدارة<br>الاجتماعات والمحاضر</div>
+    <div class="login-brand-sub">منصة متكاملة لإدارة اجتماعات فريق التحول الرقمي — توثيق المحاضر، تتبع القرارات، ومتابعة الإجراءات</div>
+    <div style="display:flex;gap:18px;margin-top:20px">
+      <div style="text-align:center"><span style="font-size:1.4rem;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--gold-light);display:block">3</span><span style="font-size:.6rem;color:rgba(255,255,255,.3)">أقسام</span></div>
+      <div style="text-align:center"><span style="font-size:1.4rem;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--gold-light);display:block">3</span><span style="font-size:.6rem;color:rgba(255,255,255,.3)">مراحل اعتماد</span></div>
+      <div style="text-align:center"><span style="font-size:1.4rem;font-weight:900;font-family:'IBM Plex Mono',monospace;color:var(--gold-light);display:block">∞</span><span style="font-size:.6rem;color:rgba(255,255,255,.3)">إجراءات</span></div>
+    </div>
+  </div>
+  <div class="login-box">
+    <div class="login-title">تسجيل الدخول</div>
+    <div class="login-sub">نفس بيانات DTCC Dashboard</div>
+    <div class="login-err" id="loginErr"></div>
+    <div class="lf"><label class="ll">البريد الإلكتروني</label><input class="li" id="loginEmail" type="email" placeholder="name@oaaaqa.gov.om" autocomplete="username"></div>
+    <div class="lf"><label class="ll">كلمة المرور</label><input class="li" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="login-btn" id="btnLogin">دخول</button>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div class="app">
+  <aside class="sb" id="sb">
+    <div class="sb-brand">
+      <div class="sb-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div><div class="sb-title">إدارة الاجتماعات</div><div class="sb-sub">OAAAQA Meeting Hub</div></div>
+    </div>
+    <div class="sb-stats">
+      <div class="ss"><span class="ss-v" id="ss1">0</span><span class="ss-l">الشهر الحالي</span></div>
+      <div class="ss"><span class="ss-v" id="ss2">0</span><span class="ss-l">بانتظار اعتماد</span></div>
+      <div class="ss"><span class="ss-v" id="ss3">0</span><span class="ss-l">إجراء مفتوح</span></div>
+    </div>
+    <nav class="sb-nav">
+      <span class="nb-grp">الرئيسية</span>
+      <button class="nb on" data-p="home"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>لوحة المتابعة</button>
+      <div class="nb-sep"></div>
+      <span class="nb-grp">الاجتماعات</span>
+      <button class="nb" data-p="team"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a4 4 0 00-.5-1.957A3 3 0 0118 18v1h-2zM2.5 15.957A4.002 4.002 0 002 17v1h-0H2v-1a3 3 0 012.45-2.957z"/></svg>اجتماعات فريق التحول<span class="nb-cnt" id="cnt-team">0</span></button>
+      <button class="nb" data-p="sub"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>اجتماعات الفرق الفرعية<span class="nb-cnt gold" id="cnt-sub">0</span></button>
+      <button class="nb" data-p="other"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>أخرى<span class="nb-cnt" style="background:var(--green)" id="cnt-other">0</span></button>
+      <div class="nb-sep"></div>
+      <span class="nb-grp">المتابعة</span>
+      <button class="nb" data-p="actions"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>الإجراءات المفتوحة<span class="nb-cnt" id="cnt-actions">0</span></button>
+      <button class="nb" data-p="archive"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/></svg>الأرشيف</button>
+    </nav>
+    <div class="sb-foot">
+      <span class="sb-user" id="sbUser">—</span>
+      <button class="btn-logout" id="btnLogout">خروج</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <span class="tb-title" id="tbTitle">لوحة المتابعة</span>
+      <div class="tb-r">
+        <a href="/" class="btn btn-ghost btn-sm">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg>
+          DTCC
+        </a>
+        <button class="btn btn-ghost btn-sm" id="btnImport">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+          استيراد محضر
+        </button>
+        <button class="btn btn-primary btn-sm" id="btnNew">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+          اجتماع جديد
+        </button>
+      </div>
+    </header>
+
+    <div class="content" id="content">
+
+      <!-- HOME -->
+      <div class="page on" id="pg-home">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--g900);display:flex;align-items:center;gap:7px">
+              <div style="width:26px;height:26px;border-radius:6px;background:var(--navy-pale);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 20 20" fill="currentColor" style="width:13px;height:13px;color:var(--navy)"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg></div>
+              لوحة المتابعة
+            </div>
+            <div style="font-size:.7rem;color:var(--g500);margin-top:2px">نظرة شاملة على اجتماعات فريق التحول الرقمي</div>
+          </div>
+        </div>
+        <div class="kgrid mb14" id="homeKpis"></div>
+        <div class="g2">
+          <div class="card card-p">
+            <div class="card-hd"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>محاضر بانتظار الاعتماد</div>
+            <div id="home-pending"></div>
+          </div>
+          <div class="card card-p">
+            <div class="card-hd"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>إجراءات متأخرة</div>
+            <div id="home-late"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM / SUB / OTHER -->
+      <div class="page" id="pg-team">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div><div style="font-size:.95rem;font-weight:800;color:var(--g900);display:flex;align-items:center;gap:7px"><div style="width:10px;height:10px;border-radius:3px;background:var(--navy)"></div>اجتماعات فريق التحول</div><div style="font-size:.7rem;color:var(--g500);margin-top:2px">الاجتماعات الدورية للفريق الرئيسي للإجادة الرقمية</div></div>
+          <button class="btn btn-primary btn-sm" onclick="openNew('team')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>جديد</button>
+        </div>
+        <div class="ga" id="list-team"></div>
+      </div>
+      <div class="page" id="pg-sub">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div><div style="font-size:.95rem;font-weight:800;color:var(--g900);display:flex;align-items:center;gap:7px"><div style="width:10px;height:10px;border-radius:3px;background:var(--gold)"></div>اجتماعات الفرق الفرعية</div><div style="font-size:.7rem;color:var(--g500);margin-top:2px">ملاك المحاور والمؤشرات — قد يشمل حضوراً خارجياً</div></div>
+          <button class="btn btn-gold btn-sm" onclick="openNew('sub')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>جديد</button>
+        </div>
+        <div class="ga" id="list-sub"></div>
+      </div>
+      <div class="page" id="pg-other">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div><div style="font-size:.95rem;font-weight:800;color:var(--g900);display:flex;align-items:center;gap:7px"><div style="width:10px;height:10px;border-radius:3px;background:var(--green)"></div>أخرى</div><div style="font-size:.7rem;color:var(--g500);margin-top:2px">اجتماعات مع الوزارة أو جهات خارجية أو طارئة</div></div>
+          <button class="btn btn-green btn-sm" onclick="openNew('other')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>جديد</button>
+        </div>
+        <div class="ga" id="list-other"></div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="page" id="pg-actions">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div><div style="font-size:.95rem;font-weight:800;color:var(--g900)">الإجراءات المفتوحة</div><div style="font-size:.7rem;color:var(--g500);margin-top:2px">جميع الإجراءات من محاضر الاجتماعات</div></div>
+          <div style="display:flex;gap:6px">
+            <select id="actFilter" class="fsel" style="font-size:.72rem;padding:5px 8px"><option value="">كل الأنواع</option><option value="team">فريق التحول</option><option value="sub">الفرق الفرعية</option><option value="other">أخرى</option></select>
+          </div>
+        </div>
+        <div class="tw"><div class="tscroll"><table class="tbl"><thead><tr><th>الإجراء</th><th>من اجتماع</th><th>المسؤول</th><th>الموعد</th><th>الحالة</th><th></th></tr></thead><tbody id="actions-body"></tbody></table></div></div>
+      </div>
+
+      <!-- ARCHIVE -->
+      <div class="page" id="pg-archive">
+        <div style="margin-bottom:12px">
+          <div style="font-size:.95rem;font-weight:800;color:var(--g900);margin-bottom:8px">الأرشيف</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <input type="text" id="arch-search" class="fi" style="min-width:160px;font-size:.75rem" placeholder="بحث...">
+            <select id="arch-type" class="fsel" style="font-size:.72rem"><option value="">كل الأنواع</option><option value="team">فريق التحول</option><option value="sub">الفرق الفرعية</option><option value="other">أخرى</option></select>
+            <select id="arch-status" class="fsel" style="font-size:.72rem"><option value="">كل الحالات</option><option value="approved">معتمد</option><option value="review">قيد المراجعة</option><option value="draft">مسودة</option></select>
+          </div>
+        </div>
+        <div id="archive-list"></div>
+      </div>
+
+      <!-- DETAIL -->
+      <div class="page" id="pg-detail">
+        <div id="detail-content"></div>
+      </div>
+
+    </div><!-- content -->
+  </div><!-- main -->
+</div><!-- app -->
+
+<!-- ── NEW MEETING MODAL ── -->
+<div class="modal-ov hide" id="modal-new">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-hd-icon" id="mhd-icon" style="background:var(--navy)"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg></div>
+      <span class="modal-title" id="modal-new-title">اجتماع جديد</span>
+      <button class="modal-close" id="close-new">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg three">
+        <div class="ff"><label class="fl">نوع الاجتماع</label>
+          <select class="fsel" id="m-type">
+            <option value="team">اجتماعات فريق التحول</option>
+            <option value="sub">اجتماعات الفرق الفرعية</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+        <div class="ff"><label class="fl">التاريخ</label><input type="date" class="fi" id="m-date"></div>
+        <div class="ff"><label class="fl">الوقت</label><input type="time" class="fi" id="m-time" value="09:00"></div>
+      </div>
+      <div class="fg full"><div class="ff"><label class="fl">عنوان الاجتماع</label><input type="text" class="fi" id="m-title" placeholder="مثال: اجتماع متابعة مؤشرات الإجادة الرقمية — الأسبوع العاشر"></div></div>
+      <div class="fg">
+        <div class="ff"><label class="fl">المكان / رابط الاجتماع</label><input type="text" class="fi" id="m-location" placeholder="قاعة الاجتماعات / Microsoft Teams"></div>
+        <div class="ff"><label class="fl">رئيس الاجتماع</label><input type="text" class="fi" id="m-chair" placeholder="الاسم الكامل لرئيس الاجتماع"></div>
+      </div>
+      <div class="fg">
+        <div class="ff"><label class="fl">كاتب المحضر</label><input type="text" class="fi" id="m-secretary" placeholder="الاسم الكامل لكاتب المحضر"></div>
+        <div class="ff"><label class="fl">المعتمد النهائي للمحضر</label><input type="text" class="fi" id="m-approver" placeholder="الاسم الكامل للمعتمد النهائي"></div>
+      </div>
+      <div class="fg full"><div class="ff">
+        <label class="fl">الحضور (مفصولون بفواصل — يمكن إضافة ضيوف خارجيين)</label>
+        <input type="text" class="fi" id="m-attendees" placeholder="محمد العمري، سارة الحارثية، Ahmed Al-Rashdi (وزارة النقل)، ...">
+      </div></div>
+      <div class="fg"><div class="ff">
+        <label class="fl">المدعوون (ضيوف خارج الفريق)</label>
+        <input type="text" class="fi" id="m-guests" placeholder="عبدالله العبري، ...">
+      </div><div class="ff">
+        <label class="fl">المعتذرون</label>
+        <input type="text" class="fi" id="m-excused" placeholder="يعقوب الريامي، ...">
+      </div></div>
+      <div style="margin-bottom:5px"><label class="fl">بنود جدول الأعمال</label></div>
+      <div id="new-agenda-list"></div>
+      <button class="btn-add-ag" id="btn-add-agenda">
+        <svg viewBox="0 0 20 20" fill="currentColor" style="width:11px;height:11px"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+        إضافة بند لجدول الأعمال
+      </button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancel-new">إلغاء</button>
+      <button class="btn btn-primary" id="save-new">حفظ الاجتماع</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD DECISION MODAL ── -->
+<div class="modal-ov hide" id="modal-dec">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-hd">
+      <div class="modal-hd-icon" style="background:var(--gold)"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></div>
+      <span class="modal-title">إضافة قرار وإجراء</span>
+      <button class="modal-close" id="close-dec">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <div class="ff"><label class="fl">البند المرتبط من جدول الأعمال</label><input type="text" class="fi" id="dec-agenda" placeholder="رقم أو عنوان البند (اختياري)"></div>
+        <div class="ff"><label class="fl">الجهة/العضو المسؤول</label><input type="text" class="fi" id="dec-owner" placeholder="اسم المسؤول عن التنفيذ"></div>
+      </div>
+      <div class="fg full"><div class="ff"><label class="fl">الموضوع / النقاش</label><textarea class="fta" id="dec-discussion" placeholder="ملخص النقاش الذي دار حول هذا البند..." style="min-height:56px"></textarea></div></div>
+      <div class="fg full"><div class="ff"><label class="fl">القرار *</label><textarea class="fta" id="dec-text" placeholder="أدخل نص القرار المتخذ..."></textarea></div></div>
+      <div style="height:1px;background:var(--g200);margin:10px 0"></div>
+      <div style="font-size:.72rem;font-weight:800;color:var(--g600);margin-bottom:8px;display:flex;align-items:center;gap:5px"><svg viewBox="0 0 20 20" fill="currentColor" style="width:12px;height:12px;color:var(--gold)"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>الإجراء والمتابعة</div>
+      <div class="fg full"><div class="ff"><label class="fl">الإجراء المطلوب</label><textarea class="fta" id="dec-action" placeholder="ما الإجراء المطلوب تنفيذه؟" style="min-height:50px"></textarea></div></div>
+      <div class="fg">
+        <div class="ff"><label class="fl">الإطار الزمني</label><input type="date" class="fi" id="dec-due"></div>
+        <div class="ff"><label class="fl">ما تم تنفيذه</label><input type="text" class="fi" id="dec-implemented" placeholder="ما الذي تم إنجازه حتى الآن؟"></div>
+      </div>
+      <div class="fg full"><div class="ff"><label class="fl">أسباب التنفيذ الجزئي أو عدم التنفيذ</label><input type="text" class="fi" id="dec-reason" placeholder="اختياري — إذا لم يُنفَّذ القرار بالكامل"></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancel-dec">إلغاء</button>
+      <button class="btn btn-gold" id="save-dec">إضافة القرار</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── UPDATE ACTION STATUS MODAL ── -->
+<div class="modal-ov hide" id="modal-act">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hd">
+      <div class="modal-hd-icon" style="background:var(--green)"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></div>
+      <span class="modal-title">تحديث حالة الإجراء</span>
+      <button class="modal-close" id="close-act">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:var(--g700);font-weight:600" id="act-modal-text"></div>
+      <div class="fg">
+        <div class="ff"><label class="fl">الحالة الجديدة</label>
+          <select class="fsel" id="act-status-sel">
+            <option value="open">مفتوح</option>
+            <option value="wip">قيد التنفيذ</option>
+            <option value="done">مكتمل ✓</option>
+          </select>
+        </div>
+        <div class="ff"><label class="fl">الإطار الزمني (إذا تغيّر)</label><input type="date" class="fi" id="act-due-upd"></div>
+      </div>
+      <div class="fg full"><div class="ff"><label class="fl">ما تم تنفيذه</label><textarea class="fta" id="act-implemented-upd" placeholder="صف ما تم إنجازه حتى الآن..." style="min-height:54px"></textarea></div></div>
+      <div class="fg full"><div class="ff"><label class="fl">أسباب التنفيذ الجزئي أو عدم التنفيذ (إن وجد)</label><input type="text" class="fi" id="act-reason-upd" placeholder="اختياري"></div></div>
+      <div class="fg full"><div class="ff"><label class="fl">ملاحظة إضافية</label><textarea class="fta" id="act-note" placeholder="أي ملاحظات إضافية..." style="min-height:44px"></textarea></div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancel-act">إلغاء</button>
+      <button class="btn btn-green" id="save-act">حفظ التحديث</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── IMPORT MODAL ── -->
+<div class="modal-ov hide" id="modal-import">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-hd">
+      <div class="modal-hd-icon" style="background:var(--purple)">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+      </div>
+      <span class="modal-title">استيراد محضر</span>
+      <button class="modal-close" id="close-import">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Tabs -->
+      <div style="display:flex;border-bottom:2px solid var(--g200);margin-bottom:14px">
+        <button class="mtab on" id="tab-json" onclick="switchImpTab('json')">لصق JSON</button>
+        <button class="mtab" id="tab-text" onclick="switchImpTab('text')">لصق نص المحضر</button>
+      </div>
+
+      <!-- JSON Tab -->
+      <div id="imp-tab-json">
+        <div style="background:var(--purple-pale);border-right:3px solid var(--purple);border-radius:var(--r-sm);padding:9px 12px;margin-bottom:12px;font-size:.72rem;color:var(--purple)">
+          أرسل نص المحضر في المحادثة مع Claude وسيعطيك JSON جاهزاً — الصقه هنا مباشرة
+        </div>
+        <div class="ff" style="margin-bottom:10px">
+          <label class="fl">القسم</label>
+          <select class="fsel" id="imp-json-type">
+            <option value="team">اجتماعات فريق التحول</option>
+            <option value="sub">اجتماعات الفرق الفرعية</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label class="fl">الصق JSON هنا</label>
+          <textarea class="fta" id="imp-json-text" style="min-height:200px;font-size:.72rem;font-family:'IBM Plex Mono',monospace" placeholder='{"title":"...","date":"2026-03-24","attendees":[...],"decisions":[...]}'></textarea>
+        </div>
+        <div id="imp-json-err" style="display:none;margin-top:8px;font-size:.7rem;color:var(--red);background:var(--red-pale);padding:7px 10px;border-radius:6px"></div>
+      </div>
+
+      <!-- Text Tab -->
+      <div id="imp-tab-text" style="display:none">
+        <div style="background:var(--gold-pale);border-right:3px solid var(--gold);border-radius:var(--r-sm);padding:9px 12px;margin-bottom:12px;font-size:.72rem;color:var(--g700)">
+          انسخ نص المحضر من Word وألصقه — سيستخرج النظام البيانات الأساسية تلقائياً
+        </div>
+        <div class="ff" style="margin-bottom:10px">
+          <label class="fl">القسم</label>
+          <select class="fsel" id="imp-text-type">
+            <option value="team">اجتماعات فريق التحول</option>
+            <option value="sub">اجتماعات الفرق الفرعية</option>
+            <option value="other">أخرى</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label class="fl">نص المحضر</label>
+          <textarea class="fta" id="imp-raw-text" style="min-height:200px;font-size:.75rem" placeholder="الصق نص المحضر هنا..."></textarea>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancel-import">إلغاء</button>
+      <button class="btn btn-primary" id="btn-import-save">استيراد وحفظ</button>
+    </div>
+  </div>
+</div>
+
+<div id="ov" class="hide"><div class="ov-box"><div class="ov-sp"></div><div class="ov-txt" id="ov-txt">جارٍ...</div></div></div>
+<div id="toaster"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ════════════════════════════════════════════════
+//  CONFIG & INIT
+// ════════════════════════════════════════════════
+const FB_CONFIG = {
+  apiKey:"AIzaSyAG4N9G_9C8WPuPehkMloW0306zSZMCGCE",
+  authDomain:"oaaaqa-dtcc.firebaseapp.com",
+  projectId:"oaaaqa-dtcc",
+  appId:"1:137728670879:web:6006fc218a7154ab12f6aa"
+};
+firebase.initializeApp(FB_CONFIG);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+// Persist session across pages (LOCAL = survives browser restart)
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+let CU = null, ROLE = 'viewer';
+let MEETINGS = [];
+let curDetailId = null;
+let newAgendaItems = [];
+let curActMeetingId = null, curActDecId = null;
+let curDecMeetingId = null;
+
+// ════════════════════════════════════════════════
+//  CONSTANTS
+// ════════════════════════════════════════════════
+const TYPE_COLORS = { team:'#0F3D68', sub:'#C8922A', other:'#1A7A4A' };
+const TYPE_LABELS = { team:'فريق التحول', sub:'الفرق الفرعية', other:'أخرى' };
+const TYPE_BADGE  = { team:'tp-team', sub:'tp-sub', other:'tp-other' };
+const STATUS_LABELS = { draft:'مسودة', review:'قيد المراجعة', approved:'معتمد', scheduled:'مجدول' };
+const STATUS_CLS    = { draft:'st-draft', review:'st-review', approved:'st-approved', scheduled:'st-scheduled' };
+const ACT_LABELS = { open:'مفتوح', wip:'قيد التنفيذ', done:'مكتمل', late:'متأخر' };
+const ACT_CLS    = { open:'act-open', wip:'act-wip', done:'act-done', late:'act-late' };
+const AV_COLORS  = ['#0F3D68','#1A7A4A','#C8922A','#5B2D8E','#C0392B','#1A5491','#065F46'];
+
+// ════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const showOv = t => { $('ov-txt').textContent=t||'جارٍ...'; $('ov').classList.remove('hide'); };
+const hideOv = () => $('ov').classList.add('hide');
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (type ? ' t'+type : '');
+  el.textContent = msg;
+  $('toaster').appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d+'T00:00:00').toLocaleDateString('ar-SA',{year:'numeric',month:'short',day:'numeric'}); }
+  catch(e) { return d; }
+}
+function canEdit() { return ROLE==='admin'||ROLE==='editor'; }
+function canApprove() { return ROLE==='admin'; }
+
+// ════════════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════════════
+$('btnLogin').addEventListener('click', async () => {
+  const email = $('loginEmail').value.trim();
+  const pass  = $('loginPass').value;
+  if (!email || !pass) { showLoginErr('أدخل البريد وكلمة المرور'); return; }
+  showOv('جارٍ تسجيل الدخول...');
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+  } catch(e) {
+    hideOv();
+    showLoginErr(e.code==='auth/invalid-credential'?'البريد أو كلمة المرور غير صحيحة':e.message);
+  }
+});
+$('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') $('btnLogin').click(); });
+$('btnLogout').addEventListener('click', () => {
+  try { localStorage.removeItem('oaaaqa_uid'); localStorage.removeItem('oaaaqa_email');
+        localStorage.removeItem('oaaaqa_role'); localStorage.removeItem('oaaaqa_name'); } catch(e){}
+  auth.signOut().then(() => { window.location.href = '/'; });
+});
+
+function showLoginErr(msg) {
+  const el = $('loginErr');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+auth.onAuthStateChanged(async user => {
+  if (user) {
+    CU = user;
+    showOv('جارٍ تحميل البيانات...');
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      ROLE = snap.exists ? (snap.data().role || 'viewer') : 'viewer';
+    } catch(e) { ROLE = 'viewer'; }
+    // Update localStorage
+    try {
+      localStorage.setItem('oaaaqa_uid',   user.uid);
+      localStorage.setItem('oaaaqa_email', user.email);
+      localStorage.setItem('oaaaqa_role',  ROLE);
+      localStorage.setItem('oaaaqa_name',  user.displayName||user.email);
+    } catch(e) {}
+    $('loginScreen').classList.add('hide');
+    $('sbUser').textContent = user.displayName || user.email;
+    await loadMeetings();
+    hideOv();
+    go('home');
+  } else {
+    // Check if session exists from dashboard
+    var uid   = localStorage.getItem('oaaaqa_uid');
+    var email = localStorage.getItem('oaaaqa_email');
+    if (uid && email) {
+      // Session from dashboard — skip login screen
+      CU   = { uid: uid, email: email, displayName: localStorage.getItem('oaaaqa_name') };
+      ROLE = localStorage.getItem('oaaaqa_role') || 'viewer';
+      $('loginScreen').classList.add('hide');
+      $('sbUser').textContent = CU.displayName || CU.email;
+      showOv('جارٍ تحميل البيانات...');
+      await loadMeetings();
+      hideOv();
+      go('home');
+    } else {
+      CU = null;
+      $('loginScreen').classList.remove('hide');
+    }
+  }
+});
+
+// ════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════
+const PAGE_TITLES = {
+  home:'لوحة المتابعة', team:'اجتماعات فريق التحول',
+  sub:'اجتماعات الفرق الفرعية', other:'أخرى',
+  actions:'الإجراءات المفتوحة', archive:'الأرشيف', detail:'تفاصيل الاجتماع'
+};
+let prevPage = 'home';
+
+function go(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('on'));
+  const pg = $('pg-'+p);
+  if (pg) pg.classList.add('on');
+  document.querySelectorAll('.nb[data-p]').forEach(el => el.classList.toggle('on', el.getAttribute('data-p')===p));
+  $('tbTitle').textContent = PAGE_TITLES[p] || p;
+  if (p !== 'detail') prevPage = p;
+  renderPage(p);
+}
+
+function renderPage(p) {
+  if (p==='home')    renderHome();
+  else if (p==='team')    renderList('team');
+  else if (p==='sub')     renderList('sub');
+  else if (p==='other')   renderList('other');
+  else if (p==='actions') renderActions();
+  else if (p==='archive') renderArchive();
+}
+
+document.querySelectorAll('.nb[data-p]').forEach(btn => {
+  btn.addEventListener('click', () => go(btn.getAttribute('data-p')));
+});
+$('btnNew').addEventListener('click', () => openNew('team'));
+
+// ════════════════════════════════════════════════
+//  FIREBASE DATA
+// ════════════════════════════════════════════════
+async function loadMeetings() {
+  try {
+    const snap = await db.collection('meetings').orderBy('date','desc').get();
+    MEETINGS = [];
+    snap.forEach(d => MEETINGS.push({ id: d.id, ...d.data() }));
+  } catch(e) { console.warn('loadMeetings:', e.message); }
+  updateSidebarStats();
+}
+
+async function saveMeeting(data) {
+  try {
+    const { id, ...rest } = data;
+    if (id) {
+      await db.collection('meetings').doc(id).set(rest, { merge: true });
+      return id;
+    } else {
+      const ref = await db.collection('meetings').add(rest);
+      return ref.id;
+    }
+  } catch(e) { toast('خطأ في الحفظ: '+e.message, 'err'); return null; }
+}
+
+function updateSidebarStats() {
+  const td = today(), thisMonth = td.slice(0,7);
+  const monthCount = MEETINGS.filter(m => (m.date||'').startsWith(thisMonth)).length;
+  const pending    = MEETINGS.filter(m => m.status==='review').length;
+  const openActs   = MEETINGS.reduce((s,m) => s + (m.actions||[]).filter(a=>a.status!=='done').length, 0);
+  $('ss1').textContent = monthCount;
+  $('ss2').textContent = pending;
+  $('ss3').textContent = openActs;
+  $('cnt-team').textContent  = MEETINGS.filter(m=>m.type==='team').length;
+  $('cnt-sub').textContent   = MEETINGS.filter(m=>m.type==='sub').length;
+  $('cnt-other').textContent = MEETINGS.filter(m=>m.type==='other').length;
+  $('cnt-actions').textContent = openActs;
+}
+
+// ════════════════════════════════════════════════
+//  HOME
+// ════════════════════════════════════════════════
+function renderHome() {
+  const td = today();
+  const total    = MEETINGS.length;
+  const approved = MEETINGS.filter(m=>m.status==='approved').length;
+  const pending  = MEETINGS.filter(m=>m.status==='review').length;
+  const openActs = MEETINGS.reduce((s,m)=>s+(m.actions||[]).filter(a=>a.status!=='done').length,0);
+  const lateActs = MEETINGS.reduce((s,m)=>s+(m.actions||[]).filter(a=>a.status!=='done'&&a.due&&a.due<td).length,0);
+  const totalDec = MEETINGS.reduce((s,m)=>s+(m.decisions||[]).length,0);
+
+  $('homeKpis').innerHTML = [
+    {v:total,    l:'إجمالي الاجتماعات',  cls:'ki-navy'},
+    {v:approved, l:'محاضر معتمدة',       cls:'ki-green'},
+    {v:pending,  l:'بانتظار الاعتماد',    cls:'ki-gold'},
+    {v:totalDec, l:'قرار مسجّل',          cls:'ki-navy'},
+    {v:openActs, l:'إجراء مفتوح',         cls:'ki-red'},
+    {v:lateActs, l:'إجراء متأخر',         cls:'ki-red'},
+  ].map(k => `<div class="kcard">
+    <div class="kico ${k.cls}"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg></div>
+    <div><span class="kv">${k.v}</span><span class="kl">${k.l}</span></div>
+  </div>`).join('');
+
+  // Pending approval
+  const pendingMtgs = MEETINGS.filter(m=>m.status==='review').slice(0,6);
+  $('home-pending').innerHTML = pendingMtgs.length
+    ? pendingMtgs.map(m => {
+        const tc = TYPE_COLORS[m.type]||'#0F3D68';
+        return `<div class="arch-row" onclick="showDetail('${m.id}')">
+          <div class="arch-dot" style="background:${tc}"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.79rem;font-weight:700;color:var(--g900)">${m.title}</div>
+            <div style="font-size:.64rem;color:var(--g500);margin-top:1px">${fmtDate(m.date)} · ${TYPE_LABELS[m.type]||'—'} · رئيس: ${m.chair||'—'}</div>
+          </div>
+          <span class="bdg st-review">قيد المراجعة</span>
+        </div>`;
+      }).join('')
+    : '<div class="empty" style="padding:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg><p>لا توجد محاضر بانتظار الاعتماد</p></div>';
+
+  // Late actions
+  const lateItems = [];
+  MEETINGS.forEach(m => {
+    (m.actions||[]).forEach(a => {
+      if (a.status!=='done' && a.due && a.due<td)
+        lateItems.push({...a, mtitle:m.title, mid:m.id, mtype:m.type});
+    });
+  });
+  $('home-late').innerHTML = lateItems.length
+    ? lateItems.slice(0,5).map(a => `<div class="arch-row" onclick="showDetail('${a.mid}')">
+        <div class="arch-dot" style="background:var(--red)"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.78rem;font-weight:700;color:var(--g900)">${a.text}</div>
+          <div style="font-size:.63rem;color:var(--g500);margin-top:1px">${a.mtitle} · ${a.owner||'—'}</div>
+        </div>
+        <span style="font-size:.65rem;font-weight:800;color:var(--red);font-family:'IBM Plex Mono',monospace;white-space:nowrap">${a.due}</span>
+      </div>`).join('')
+    : '<div class="empty" style="padding:20px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg><p>لا توجد إجراءات متأخرة</p></div>';
+}
+
+// ════════════════════════════════════════════════
+//  MEETING LIST
+// ════════════════════════════════════════════════
+function renderList(type) {
+  const items = MEETINGS.filter(m => m.type===type);
+  const el = $('list-'+type);
+  if (!el) return;
+  const tc = TYPE_COLORS[type];
+  if (!items.length) {
+    el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>لا توجد اجتماعات في هذا القسم</p><small>اضغط "جديد" لإضافة اجتماع</small></div>`;
+    return;
+  }
+  el.innerHTML = items.map(m => {
+    const sm  = STATUS_CLS[m.status]||'st-draft';
+    const sl  = STATUS_LABELS[m.status]||'مسودة';
+    const acts = (m.actions||[]).filter(a=>a.status!=='done');
+    const td = today();
+    const late = acts.filter(a=>a.due&&a.due<td).length;
+    return `<div class="mc mc-${type}">
+      <div class="mc-top-bar"></div>
+      <div class="mc-body">
+        <div class="mc-header">
+          <div class="mc-title">${m.title}</div>
+          <span class="bdg ${sm}">${sl}</span>
+        </div>
+        <div class="mc-meta">
+          <span class="mc-mi"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>${fmtDate(m.date)}${m.time?' — '+m.time:''}</span>
+          ${m.location?`<span class="mc-mi"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>${m.location}</span>`:''}
+          ${m.chair?`<span class="mc-mi"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>${m.chair}</span>`:''}
+          ${m.approver?`<span class="mc-mi" style="color:var(--gold)"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>المعتمد: ${m.approver}</span>`:''}
+        </div>
+        <div class="mc-footer">
+          <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+            ${(m.decisions||[]).length?`<span style="font-size:.62rem;color:var(--g500)">${(m.decisions||[]).length} قرار</span>`:''}
+            ${acts.length?`<span style="font-size:.62rem;font-weight:700;background:var(--orange-pale);color:var(--orange);padding:1px 6px;border-radius:99px">${acts.length} إجراء مفتوح</span>`:''}
+            ${late?`<span style="font-size:.62rem;font-weight:700;background:var(--red-pale);color:var(--red);padding:1px 6px;border-radius:99px">${late} متأخر</span>`:''}
+            ${(m.attendees||[]).length?`<span style="font-size:.62rem;color:var(--g500)">${(m.attendees||[]).length} حاضر</span>`:''}
+          </div>
+          <div class="mc-acts-row">
+            <button class="btn btn-ghost btn-sm" onclick="showDetail('${m.id}')">عرض</button>
+            ${canEdit()?`<button class="btn btn-primary btn-sm" onclick="showDetail('${m.id}')">المحضر</button>`:''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════
+//  DETAIL VIEW
+// ════════════════════════════════════════════════
+window.showDetail = function(id) {
+  const m = MEETINGS.find(x=>x.id===id);
+  if (!m) return;
+  curDetailId = id;
+  const td = today();
+  const tc = TYPE_COLORS[m.type]||'#0F3D68';
+  const sm = STATUS_CLS[m.status]||'st-draft';
+  const sl = STATUS_LABELS[m.status]||'مسودة';
+
+  // Approval flow step
+  const step = m.status==='draft'?0:m.status==='review'?1:2;
+  const afSteps = [
+    {n:'كاتب المحضر', s:m.secretary||'—'},
+    {n:'رئيس الاجتماع', s:m.chair||'—'},
+    {n:'المعتمد النهائي', s:m.approver||'—'},
+  ];
+
+  const afHtml = `<div class="af-wrap">
+    <div class="af-title"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>سير الاعتماد</div>
+    <div class="af-flow">${afSteps.map((s,i)=>{
+      const cls = i<step?'done':i===step?'active':'';
+      return `<div class="af-step ${cls}">
+        <div class="af-dot">${i<step?'✓':(i+1)}</div>
+        <div class="af-name">${s.n}</div>
+        <div class="af-role">${s.s}</div>
+      </div>`;
+    }).join('')}</div>
+    ${m.status==='approved'&&m.approvedAt?`<div style="font-size:.65rem;color:var(--green);text-align:center;margin-top:8px;font-weight:700">✓ تم الاعتماد بتاريخ ${m.approvedAt.slice(0,10)} بواسطة ${m.approvedBy||'—'}</div>`:''}
+  </div>`;
+
+  // Attendance + Guests + Excused
+  const allAtt = (m.attendees||[]);
+  const allGuests = (m.guests||[]);
+  const allExcused = (m.excused||[]);
+  const attHtml = (allAtt.length||allGuests.length||allExcused.length) ? `<div class="min-sec">
+    <div class="min-sec-hd">
+      <div class="min-sec-ht"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>الحضور (${allAtt.length}${allGuests.length?' + '+allGuests.length+' مدعو':''}${allExcused.length?' · '+allExcused.length+' معتذر':''})</div>
+    </div>
+    <div class="min-sec-body">
+      ${allAtt.length?`<div style="font-size:.65rem;font-weight:700;color:var(--g500);margin-bottom:6px">أعضاء الفريق</div>
+      <div class="att-grid" style="margin-bottom:${allGuests.length||allExcused.length?'12px':'0'}">${allAtt.map((a,i)=>`<div class="att-card">
+        <div class="att-av" style="background:${AV_COLORS[i%AV_COLORS.length]}">${a.charAt(0)}</div>
+        <div><div class="att-name" title="${a}">${a}</div><div class="att-type">عضو الفريق</div></div>
+      </div>`).join('')}</div>`:''}
+      ${allGuests.length?`<div style="font-size:.65rem;font-weight:700;color:var(--g500);margin-bottom:6px">المدعوون</div>
+      <div class="att-grid" style="margin-bottom:${allExcused.length?'12px':'0'}">${allGuests.map((a,i)=>`<div class="att-card" style="border-color:var(--gold-pale)">
+        <div class="att-av" style="background:var(--gold)">${a.charAt(0)}</div>
+        <div><div class="att-name" title="${a}">${a}</div><div class="att-type">مدعو</div></div>
+      </div>`).join('')}</div>`:''}
+      ${allExcused.length?`<div style="font-size:.65rem;font-weight:700;color:var(--g500);margin-bottom:6px">المعتذرون</div>
+      <div class="att-grid">${allExcused.map((a,i)=>`<div class="att-card" style="border-color:var(--red-pale);opacity:.7">
+        <div class="att-av" style="background:var(--g300)">${a.charAt(0)}</div>
+        <div><div class="att-name" title="${a}">${a}</div><div class="att-type" style="color:var(--red)">معتذر</div></div>
+      </div>`).join('')}</div>`:''}
+    </div>
+  </div>` : '';
+
+  // Agenda
+  const agHtml = (m.agenda||[]).length ? `<div class="min-sec">
+    <div class="min-sec-hd"><div class="min-sec-ht"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/></svg>جدول الأعمال</div></div>
+    <div class="min-sec-body">${(m.agenda||[]).map((ag,i)=>`<div class="ag-item"><div class="ag-num">${i+1}</div><span class="ag-txt">${ag}</span></div>`).join('')}</div>
+  </div>` : '';
+
+  // Decisions & Actions
+  const decs = m.decisions||[];
+  const acts = m.actions||[];
+  const decHtml = `<div class="min-sec">
+    <div class="min-sec-hd">
+      <div class="min-sec-ht"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>القرارات والإجراءات (${decs.length})</div>
+      ${canEdit()?`<button class="btn btn-gold btn-sm" onclick="openAddDecision('${id}')">+ قرار</button>`:''}
+    </div>
+    <div class="min-sec-body">${decs.length ? decs.map((d,i)=>{
+      const act = acts.find(a=>a.decisionId===d.id)||null;
+      const actStatus = act ? (act.status==='done'?'done':act.due&&act.due<td?'late':act.status||'open') : null;
+      const actCls = actStatus ? ACT_CLS[actStatus] : '';
+      const actLbl = actStatus ? ACT_LABELS[actStatus] : '';
+      return `<div class="dec-item">
+        <div class="dec-hd"><div class="dec-num">${i+1}</div><div style="flex:1">
+          ${d.agenda?`<div style="font-size:.62rem;font-weight:700;color:var(--gold);margin-bottom:3px">البند: ${d.agenda}</div>`:''}
+          <div class="dec-text">${d.text}</div>
+        </div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-size:.72rem">
+          <div style="background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:7px 9px">
+            <div style="font-size:.6rem;font-weight:800;color:var(--navy);margin-bottom:3px">النقاش</div>
+            <div style="color:var(--g700)">${d.discussion||'—'}</div>
+          </div>
+          <div style="background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:7px 9px">
+            <div style="font-size:.6rem;font-weight:800;color:var(--navy);margin-bottom:3px">القرار</div>
+            <div style="color:var(--g700);font-weight:600">${d.text}</div>
+          </div>
+        </div>
+        ${act?`<div class="act-box" style="margin-top:8px">
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;font-size:.72rem">
+            <div>
+              <div style="font-size:.6rem;font-weight:800;color:var(--gold);margin-bottom:3px">الإجراء المطلوب</div>
+              <div style="color:var(--g700)">${act.text}</div>
+            </div>
+            <div>
+              <div style="font-size:.6rem;font-weight:800;color:var(--g500);margin-bottom:3px">الجهة/العضو المسؤول</div>
+              <div style="color:var(--g700);font-weight:600">${act.owner||'—'}</div>
+            </div>
+            <div>
+              <div style="font-size:.6rem;font-weight:800;color:var(--g500);margin-bottom:3px">الإطار الزمني</div>
+              <div style="color:${act.due&&act.due<td&&act.status!=='done'?'var(--red)':'var(--g700)'};font-family:'IBM Plex Mono',monospace">${act.due||'—'}</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-size:.72rem">
+            <div>
+              <div style="font-size:.6rem;font-weight:800;color:var(--g500);margin-bottom:3px">ما تم تنفيذه</div>
+              <div style="color:var(--g700)">${act.implemented||'—'}</div>
+            </div>
+            <div>
+              <div style="font-size:.6rem;font-weight:800;color:var(--g500);margin-bottom:3px">أسباب التنفيذ الجزئي أو عدم التنفيذ</div>
+              <div style="color:var(--g700)">${act.reason||'—'}</div>
+            </div>
+          </div>
+          <div class="act-meta" style="margin-top:8px">
+            <span class="bdg ${actCls}">${actLbl}</span>
+            ${act.note?`<span class="act-meta-item" style="color:var(--navy);font-style:italic">${act.note}</span>`:''}
+            ${canEdit()&&act.status!=='done'?`<button class="btn btn-xs btn-ghost" style="margin-right:4px" onclick="openUpdateAction('${id}','${d.id}')">تحديث</button>`:''}
+          </div>
+        </div>`:''}
+      </div>`;
+    }).join('') : '<div class="empty" style="padding:16px"><p>لم تُسجَّل قرارات بعد</p><small>اضغط "+ قرار" لإضافة قرار وإجراء</small></div>'}</div>
+  </div>`;
+
+  $('detail-content').innerHTML = `
+    <div class="detail-hero">
+      <div class="dh-inner">
+        <div class="dh-top">
+          <div>
+            <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+              <span class="bdg ${TYPE_BADGE[m.type]}">${TYPE_LABELS[m.type]||'—'}</span>
+              <span class="bdg ${sm}">${sl}</span>
+            </div>
+            <div class="dh-title">${m.title}</div>
+          </div>
+        </div>
+        <div class="dh-meta">
+          <span><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>${fmtDate(m.date)}${m.time?' — '+m.time:''}</span>
+          ${m.location?`<span><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9z" clip-rule="evenodd"/></svg>${m.location}</span>`:''}
+          ${m.chair?`<span>رئيس: ${m.chair}</span>`:''}
+          ${m.secretary?`<span>كاتب: ${m.secretary}</span>`:''}
+          ${m.approver?`<span>المعتمد: ${m.approver}</span>`:''}
+        </div>
+        <div class="dh-actions">
+          <button class="btn btn-ghost btn-sm" onclick="go('${prevPage}')">← رجوع</button>
+          ${canEdit()&&m.status==='draft'?`<button class="btn btn-sm" style="background:var(--orange);color:#fff" onclick="submitReview('${id}')">رفع للمراجعة</button>`:''}
+          ${canApprove()&&m.status==='review'?`<button class="btn btn-sm" style="background:var(--green);color:#fff" onclick="approveMtg('${id}')">✓ اعتماد المحضر</button>`:''}
+          ${canEdit()?`<button class="btn btn-gold btn-sm" onclick="openAddDecision('${id}')">+ قرار وإجراء</button>`:''}
+          ${(canEdit()&&(m.status==='draft'||m.status==='review'))?`<button class="btn btn-sm" style="background:var(--red-pale);color:var(--red);border:1px solid var(--red-pale)" onclick="deleteMeeting('${id}')">🗑 حذف</button>`:''}
+        </div>
+      </div>
+    </div>
+    ${afHtml}${attHtml}${agHtml}${decHtml}`;
+
+  go('detail');
+};
+
+// ════════════════════════════════════════════════
+//  APPROVE / REVIEW
+// ════════════════════════════════════════════════
+window.submitReview = async function(id) {
+  const idx = MEETINGS.findIndex(m=>m.id===id);
+  if (idx<0) return;
+  MEETINGS[idx].status = 'review';
+  showOv('جارٍ الرفع...');
+  await saveMeeting({id, ...MEETINGS[idx]});
+  hideOv(); toast('تم رفع المحضر للمراجعة ✅','ok');
+  updateSidebarStats(); showDetail(id);
+};
+
+window.deleteMeeting = async function(id) {
+  var m = MEETINGS.find(x=>x.id===id);
+  if (!m) return;
+  if (!confirm('هل تريد حذف هذا الاجتماع نهائياً؟\n"' + m.title + '"')) return;
+  showOv('جارٍ الحذف...');
+  try {
+    await db.collection('meetings').doc(id).delete();
+    MEETINGS = MEETINGS.filter(x=>x.id!==id);
+    updateSidebarStats();
+    hideOv();
+    toast('تم حذف الاجتماع','ok');
+    go(prevPage);
+  } catch(e) {
+    hideOv();
+    toast('خطأ في الحذف: '+e.message,'err');
+  }
+};
+
+window.approveMtg = async function(id) {
+  if (!canApprove()) { toast('غير مصرح','err'); return; }
+  const idx = MEETINGS.findIndex(m=>m.id===id);
+  if (idx<0) return;
+  MEETINGS[idx].status = 'approved';
+  MEETINGS[idx].approvedAt = new Date().toISOString().slice(0,10);
+  MEETINGS[idx].approvedBy = CU ? (CU.displayName||CU.email) : '—';
+  showOv('جارٍ الاعتماد...');
+  await saveMeeting({id, ...MEETINGS[idx]});
+  hideOv(); toast('تم اعتماد المحضر ✅','ok');
+  updateSidebarStats(); showDetail(id);
+};
+
+// ════════════════════════════════════════════════
+//  ACTIONS PAGE
+// ════════════════════════════════════════════════
+function renderActions() {
+  const td = today();
+  const typeFilter = $('actFilter')?.value||'';
+  let rows = [];
+  MEETINGS.forEach(m => {
+    if (typeFilter && m.type!==typeFilter) return;
+    (m.actions||[]).forEach(a => {
+      if (a.status==='done') return;
+      const st = a.due&&a.due<td ? 'late' : (a.status||'open');
+      rows.push({...a, mtitle:m.title, mid:m.id, mtype:m.type, computedStatus:st});
+    });
+  });
+  rows.sort((a,b) => (a.due||'9999').localeCompare(b.due||'9999'));
+  $('actions-body').innerHTML = rows.length ? rows.map(a => {
+    const tc = TYPE_COLORS[a.mtype]||'#0F3D68';
+    return `<tr>
+      <td><div style="font-weight:700;font-size:.78rem">${a.text}</div></td>
+      <td><span style="font-size:.68rem;font-weight:600;color:${tc}">${a.mtitle}</span></td>
+      <td style="font-size:.74rem">${a.owner||'—'}</td>
+      <td style="font-size:.72rem;font-family:'IBM Plex Mono',monospace;color:${a.computedStatus==='late'?'var(--red)':'var(--g500)'}">${a.due||'—'}</td>
+      <td><span class="bdg ${ACT_CLS[a.computedStatus]||'act-open'}">${ACT_LABELS[a.computedStatus]||'مفتوح'}</span></td>
+      <td><div style="display:flex;gap:4px">
+        ${canEdit()?`<button class="btn btn-xs btn-green" onclick="openUpdateAction('${a.mid}','${a.decisionId}')">تحديث</button>`:''}
+        <button class="btn btn-xs btn-ghost" onclick="showDetail('${a.mid}')">عرض</button>
+      </div></td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="6"><div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/></svg><p>لا توجد إجراءات مفتوحة</p></div></td></tr>`;
+}
+
+$('actFilter')?.addEventListener('change', renderActions);
+
+// ════════════════════════════════════════════════
+//  ARCHIVE
+// ════════════════════════════════════════════════
+function renderArchive() {
+  const srch   = ($('arch-search')?.value||'').toLowerCase();
+  const type   = $('arch-type')?.value||'';
+  const status = $('arch-status')?.value||'';
+  const items  = MEETINGS.filter(m => {
+    if (type && m.type!==type) return false;
+    if (status && m.status!==status) return false;
+    if (srch && !m.title.toLowerCase().includes(srch)) return false;
+    return true;
+  });
+  $('archive-list').innerHTML = items.length ? items.map(m => {
+    const tc = TYPE_COLORS[m.type]||'#0F3D68';
+    const sm = STATUS_CLS[m.status]||'st-draft';
+    const sl = STATUS_LABELS[m.status]||'مسودة';
+    const doneActs = (m.actions||[]).filter(a=>a.status==='done').length;
+    const totalActs = (m.actions||[]).length;
+    return `<div class="arch-row" onclick="showDetail('${m.id}')">
+      <div class="arch-dot" style="background:${tc}"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.8rem;font-weight:700;color:var(--g900)">${m.title}</div>
+        <div style="font-size:.64rem;color:var(--g500);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap">
+          <span>${fmtDate(m.date)}</span>
+          <span>${TYPE_LABELS[m.type]||'—'}</span>
+          ${m.chair?`<span>رئيس: ${m.chair}</span>`:''}
+          <span>${(m.decisions||[]).length} قرار</span>
+          ${totalActs?`<span>${doneActs}/${totalActs} إجراء</span>`:''}
+        </div>
+      </div>
+      <span class="bdg ${sm}">${sl}</span>
+    </div>`;
+  }).join('') : `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg><p>لا توجد نتائج</p></div>`;
+}
+
+['arch-search','arch-type','arch-status'].forEach(id => $( id)?.addEventListener('change',renderArchive));
+$('arch-search')?.addEventListener('input', renderArchive);
+
+// ════════════════════════════════════════════════
+//  NEW MEETING MODAL
+// ════════════════════════════════════════════════
+window.openNew = function(type) {
+  newAgendaItems = [];
+  $('new-agenda-list').innerHTML = '';
+  $('m-type').value = type||'team';
+  $('m-date').value = today();
+  $('m-time').value = '09:00';
+  ['m-title','m-location','m-chair','m-secretary','m-approver','m-attendees','m-guests','m-excused'].forEach(id => $(id).value='');
+  const colors = {team:var_nav, sub:'#C8922A', other:'#1A7A4A'};
+  $('mhd-icon').style.background = TYPE_COLORS[type||'team'];
+  $('modal-new-title').textContent = 'اجتماع جديد — '+TYPE_LABELS[type||'team'];
+  $('modal-new').classList.remove('hide');
+};
+
+function var_nav(){ return '#0F3D68'; }
+
+$('close-new').addEventListener('click', () => $('modal-new').classList.add('hide'));
+$('cancel-new').addEventListener('click', () => $('modal-new').classList.add('hide'));
+
+$('btn-add-agenda').addEventListener('click', () => {
+  const txt = prompt('أدخل بند جدول الأعمال:');
+  if (txt?.trim()) { newAgendaItems.push(txt.trim()); renderNewAgenda(); }
+});
+
+function renderNewAgenda() {
+  $('new-agenda-list').innerHTML = newAgendaItems.map((ag,i) =>
+    `<div class="ag-item"><div class="ag-num">${i+1}</div><span class="ag-txt">${ag}</span><button class="ag-del" onclick="rmAg(${i})">✕</button></div>`
+  ).join('');
+}
+window.rmAg = i => { newAgendaItems.splice(i,1); renderNewAgenda(); };
+
+$('save-new').addEventListener('click', async () => {
+  const title = $('m-title').value.trim();
+  if (!title) { toast('أدخل عنوان الاجتماع','err'); return; }
+  showOv('جارٍ الحفظ...');
+  const attRaw = $('m-attendees').value;
+  const attendees = attRaw ? attRaw.split(/[,،]/).map(a=>a.trim()).filter(Boolean) : [];
+  const guestsRaw = $('m-guests').value;
+  const guests = guestsRaw ? guestsRaw.split(/[,،]/).map(a=>a.trim()).filter(Boolean) : [];
+  const excusedRaw = $('m-excused').value;
+  const excused = excusedRaw ? excusedRaw.split(/[,،]/).map(a=>a.trim()).filter(Boolean) : [];
+  const data = {
+    type:       $('m-type').value,
+    title,
+    date:       $('m-date').value,
+    time:       $('m-time').value,
+    location:   $('m-location').value.trim(),
+    chair:      $('m-chair').value.trim(),
+    secretary:  $('m-secretary').value.trim(),
+    approver:   $('m-approver').value.trim(),
+    attendees,
+    guests,
+    excused,
+    agenda:     newAgendaItems.slice(),
+    decisions:  [],
+    actions:    [],
+    status:     'draft',
+    createdAt:  new Date().toISOString(),
+    createdBy:  CU ? CU.email : '',
+  };
+  const id = await saveMeeting(data);
+  if (id) {
+    data.id = id;
+    MEETINGS.unshift(data);
+    updateSidebarStats();
+    $('modal-new').classList.add('hide');
+    hideOv();
+    toast('تم حفظ الاجتماع ✅','ok');
+    showDetail(id);
+  } else { hideOv(); }
+});
+
+// ════════════════════════════════════════════════
+//  ADD DECISION MODAL
+// ════════════════════════════════════════════════
+window.openAddDecision = function(id) {
+  curDecMeetingId = id;
+  ['dec-agenda','dec-text','dec-action','dec-owner','dec-discussion','dec-implemented','dec-reason'].forEach(x => $(x).value='');
+  $('dec-due').value = '';
+  $('modal-dec').classList.remove('hide');
+};
+
+$('close-dec').addEventListener('click', () => $('modal-dec').classList.add('hide'));
+$('cancel-dec').addEventListener('click', () => $('modal-dec').classList.add('hide'));
+
+$('save-dec').addEventListener('click', async () => {
+  const text = $('dec-text').value.trim();
+  if (!text) { toast('أدخل نص القرار','err'); return; }
+  const idx = MEETINGS.findIndex(m=>m.id===curDecMeetingId);
+  if (idx<0) return;
+  const decId = 'd' + Date.now();
+  const decision = {
+    id: decId,
+    text,
+    agenda: $('dec-agenda').value.trim(),
+    discussion: $('dec-discussion').value.trim(),
+  };
+  const actionText = $('dec-action').value.trim();
+  if (actionText) {
+    const action = {
+      decisionId: decId,
+      text: actionText,
+      owner: $('dec-owner').value.trim(),
+      due: $('dec-due').value,
+      implemented: $('dec-implemented').value.trim(),
+      reason: $('dec-reason').value.trim(),
+      status: 'open',
+      createdAt: new Date().toISOString(),
+    };
+    MEETINGS[idx].actions = (MEETINGS[idx].actions||[]).concat(action);
+  }
+  MEETINGS[idx].decisions = (MEETINGS[idx].decisions||[]).concat(decision);
+  showOv('جارٍ الحفظ...');
+  await saveMeeting({id:curDecMeetingId, ...MEETINGS[idx]});
+  hideOv();
+  $('modal-dec').classList.add('hide');
+  toast('تم إضافة القرار ✅','ok');
+  updateSidebarStats();
+  showDetail(curDecMeetingId);
+});
+
+// ════════════════════════════════════════════════
+//  UPDATE ACTION STATUS MODAL
+// ════════════════════════════════════════════════
+window.openUpdateAction = function(meetingId, decisionId) {
+  const m = MEETINGS.find(x=>x.id===meetingId);
+  if (!m) return;
+  const act = (m.actions||[]).find(a=>a.decisionId===decisionId);
+  if (!act) return;
+  curActMeetingId = meetingId;
+  curActDecId = decisionId;
+  $('act-modal-text').textContent = act.text;
+  $('act-status-sel').value = act.status||'open';
+  $('act-note').value = '';
+  $('act-implemented-upd').value = act.implemented||'';
+  $('act-reason-upd').value = act.reason||'';
+  $('act-due-upd').value = act.due||'';
+  $('modal-act').classList.remove('hide');
+};
+
+$('close-act').addEventListener('click', () => $('modal-act').classList.add('hide'));
+$('cancel-act').addEventListener('click', () => $('modal-act').classList.add('hide'));
+
+$('save-act').addEventListener('click', async () => {
+  const idx = MEETINGS.findIndex(m=>m.id===curActMeetingId);
+  if (idx<0) return;
+  const ai = (MEETINGS[idx].actions||[]).findIndex(a=>a.decisionId===curActDecId);
+  if (ai<0) return;
+  MEETINGS[idx].actions[ai].status      = $('act-status-sel').value;
+  MEETINGS[idx].actions[ai].note        = $('act-note').value.trim();
+  MEETINGS[idx].actions[ai].implemented = $('act-implemented-upd').value.trim();
+  MEETINGS[idx].actions[ai].reason      = $('act-reason-upd').value.trim();
+  const updDue = $('act-due-upd').value;
+  if (updDue) MEETINGS[idx].actions[ai].due = updDue;
+  if (MEETINGS[idx].actions[ai].status==='done')
+    MEETINGS[idx].actions[ai].completedAt = new Date().toISOString().slice(0,10);
+  showOv('جارٍ الحفظ...');
+  await saveMeeting({id:curActMeetingId, ...MEETINGS[idx]});
+  hideOv();
+  $('modal-act').classList.add('hide');
+  toast('تم تحديث الإجراء ✅','ok');
+  updateSidebarStats();
+  if (document.getElementById('pg-detail').classList.contains('on'))
+    showDetail(curActMeetingId);
+  else renderPage(document.querySelector('.nb.on')?.getAttribute('data-p')||'home');
+});
+
+// Set today's date on load
+$('m-date') && ($('m-date').value = today());
+
+// ════════════════════════════════════════════════
+//  FIRST MEETING — محضر 5/2026
+// ════════════════════════════════════════════════
+async function seedFirstMeeting() {
+  // Check if already seeded
+  const existing = MEETINGS.find(m => m.title && m.title.includes('5/2026'));
+  if (existing) { toast('الاجتماع الأول موجود بالفعل',''); return; }
+  showOv('جارٍ إضافة الاجتماع الأول...');
+  const decId1='d1',decId2='d2',decId3='d3',decId4='d4',decId5='d5';
+  const firstMeeting = {
+    type: 'team',
+    title: 'اجتماع فريق التحول الرقمي المؤسسي — محضر رقم (5/2026)',
+    date: '2026-03-24',
+    time: '10:00',
+    location: 'مايكروسوفت تيمز',
+    chair: 'د. ناصر الهنائي',
+    secretary: 'ماجد الغافري',
+    approver: 'د. ناصر الهنائي',
+    attendees: ['د. ناصر الهنائي','جهينة الكندي','زمزم السليمي','د. تيسيرة البلوشي','سمر الراشدي','د. أحمد المعمري','ماجد الغافري'],
+    guests: ['عبدالله العبري'],
+    excused: ['يعقوب الريامي'],
+    agenda: [
+      'متابعة تنفيذ القرارات',
+      'إيجاز دوري عن أعمال الفرق التنفيذية ومشروع بوابة الخدمات الإلكترونية',
+      'الأعمال المتعلقة باستيفاء مؤشرات أداء الإجادة الرقمية ومسودة إطار حوكمة المؤشرات',
+      'المستندات والوثائق والبيانات المطلوبة للإجادة الرقمية',
+      'ما يستجد من أعمال',
+    ],
+    decisions: [
+      { id:decId1, agenda:'متابعة تنفيذ القرارات', discussion:'النقاش حول القرارات التي تأخر تنفيذها وأسباب ذلك وطرق معالجة التأخير في تنفيذها', text:'قيام كافة الأعضاء بتحديث سجل متابعة تنفيذ القرارات على الحافظة المشتركة بإشراف وتنسيق مقرر الفريق' },
+      { id:decId2, agenda:'إيجاز دوري عن أعمال الفرق التنفيذية', discussion:'تناقش الأعضاء مع رئيس الفريق حول آلية ودورية إعداد الإيجاز الدوري عن أعمال الفرق التنفيذية. أبدى بعض الأعضاء تخوفهم من حجم الضغط وبعد نقاش معمق تم التوافق على الاستمرار في الآلية المعتمدة', text:'التأكيد على أهمية تقديم إيجاز دوري مختصر عن أعمال الفرق التنفيذية قبل كل اجتماع للفريق الرئيسي بيومين على الأقل، على أن يجري إعادة تقييم الآلية بنهاية شهر أبريل 2026م' },
+      { id:decId3, agenda:'مؤشرات الإجادة الرقمية ومسودة إطار حوكمة المؤشرات', discussion:'تحدثت زمزم السليمي عن الإطار التنظيمي لإدارة المؤشرات في منظومة الإجادة الرقمية والتحديثات التي طرأت عليه بعد الاجتماع السابق وبعد تشكيل الفريق الفرعي للإجادة الرقمية', text:'قيام فريق الالتزام والحوكمة بإرسال النسخة النهائية من مسودة إطار حوكمة المؤشرات بعد إدخال التعديلات المقترحة من قبل أعضاء الفريق وإضافة أخصائي الإجادة الرقمية لعضوية فريق الإجادة الرقمية' },
+      { id:decId4, agenda:'المستندات والوثائق والبيانات المطلوبة للإجادة الرقمية', discussion:'تحدثت جهينة عن المستندات والوثائق والبيانات المطلوبة للإجادة الرقمية ومقترح إسناد أعمال تطوير هذه المستندات والسياسات إلى شركة متخصصة بعد تحديد نطاق العمل داخليا وبالتشاور مع وزارة النقل', text:'إرسال القائمة الخاصة بالمستندات والوثائق والسياسات المطلوبة للإجادة الرقمية لأخذ التغذية الراجعة من الأعضاء تمهيداً لاعتمادها قبل نهاية شهر مارس 2026' },
+      { id:decId5, agenda:'ما يستجد من أعمال', discussion:'جرى النقاش حول الاجتماع العام لفريق التحول الرقمي وعن الأجندة الخاصة بالاجتماع', text:'يقوم كل فريق بتصميم الفقرة الخاصة به في الاجتماع على أن تشمل مقدمة بسيطة عن اختصاصات كل فريق مع نبذة أكثر تفصيلا عن مشاريع ومبادرات الخطة السنوية للفريق لهذا العام' },
+    ],
+    actions: [
+      { decisionId:decId1, text:'تحديث سجل متابعة تنفيذ القرارات على الحافظة المشتركة', owner:'ماجد الغافري (بإشراف وتنسيق مقرر الفريق)', due:'2026-03-29', status:'open', implemented:'', reason:'', createdAt:new Date().toISOString() },
+      { decisionId:decId2, text:'تقديم إيجاز دوري مختصر عن أعمال الفرق التنفيذية قبل كل اجتماع بيومين + إعادة تقييم الآلية بنهاية أبريل', owner:'رؤساء الفرق التنفيذية', due:'2026-04-30', status:'open', implemented:'', reason:'', createdAt:new Date().toISOString() },
+      { decisionId:decId3, text:'إرسال النسخة النهائية من مسودة إطار حوكمة المؤشرات بعد إدخال التعديلات', owner:'زمزم السليمي (فريق الالتزام والحوكمة)', due:'2026-03-29', status:'open', implemented:'', reason:'', createdAt:new Date().toISOString() },
+      { decisionId:decId4, text:'إرسال قائمة المستندات والوثائق والسياسات للأعضاء لأخذ التغذية الراجعة', owner:'جهينة الكندي', due:'2026-03-24', status:'open', implemented:'', reason:'', createdAt:new Date().toISOString() },
+      { decisionId:decId5, text:'تصميم الفقرة الخاصة بكل فريق للاجتماع العام (مقدمة + مشاريع ومبادرات الخطة السنوية)', owner:'د.تيسيرة وجهينة ود.أحمد وسمر وماجد', due:'2026-03-31', status:'open', implemented:'', reason:'', createdAt:new Date().toISOString() },
+    ],
+    status: 'approved',
+    approvedAt: '2026-03-24',
+    approvedBy: 'د. ناصر الهنائي',
+    createdAt: new Date().toISOString(),
+    createdBy: CU ? CU.email : '',
+  };
+  const id = await saveMeeting(firstMeeting);
+  if (id) {
+    firstMeeting.id = id;
+    MEETINGS.unshift(firstMeeting);
+    updateSidebarStats();
+    hideOv();
+    toast('تم إضافة محضر الاجتماع الأول ✅','ok');
+    go('team');
+  } else { hideOv(); }
+}
+
+// ════════════════════════════════════════════════
+//  IMPORT MODAL — JSON paste + text parse
+// ════════════════════════════════════════════════
+
+window.switchImpTab = function(tab) {
+  $('imp-tab-json').style.display  = tab==='json' ? 'block' : 'none';
+  $('imp-tab-text').style.display  = tab==='text' ? 'block' : 'none';
+  $('tab-json').classList.toggle('on', tab==='json');
+  $('tab-text').classList.toggle('on', tab==='text');
+};
+
+$('btnImport').addEventListener('click', () => {
+  $('imp-json-text').value = '';
+  $('imp-raw-text').value  = '';
+  $('imp-json-err').style.display = 'none';
+  switchImpTab('json');
+  $('modal-import').classList.remove('hide');
+});
+$('close-import').addEventListener('click',  () => $('modal-import').classList.add('hide'));
+$('cancel-import').addEventListener('click', () => $('modal-import').classList.add('hide'));
+
+$('btn-import-save').addEventListener('click', async function() {
+  var isJson = $('tab-json').classList.contains('on');
+
+  if (isJson) {
+    // ── JSON paste mode ──
+    var raw = $('imp-json-text').value.trim();
+    if (!raw) { showImpErr('الصق JSON أولاً'); return; }
+    var parsed;
+    try {
+      parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    } catch(e) {
+      showImpErr('JSON غير صحيح — تحقق من التنسيق: ' + e.message);
+      return;
+    }
+    await saveImported(parsed, $('imp-json-type').value);
+
+  } else {
+    // ── Text parse mode — extract basics with regex ──
+    var txt = $('imp-raw-text').value.trim();
+    if (!txt) { showImpErr('الصق نص المحضر أولاً'); return; }
+
+    var parsed = parseMinutesText(txt);
+    await saveImported(parsed, $('imp-text-type').value);
+  }
+});
+
+function showImpErr(msg) {
+  var el = $('imp-json-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function parseMinutesText(txt) {
+  // Extract basics from plain text
+  var lines = txt.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+
+  var d = {
+    title: '', date: '', time: '', location: '',
+    chair: '', secretary: '', approver: '',
+    attendees: [], guests: [], excused: [],
+    agenda: [], decisions: []
+  };
+
+  lines.forEach(function(line) {
+    if (/التاريخ|تاريخ/.test(line)) {
+      var m = line.match(/(\d{1,2})[\/\-\\](\d{1,2})[\/\-\\](\d{2,4})/);
+      if (m) {
+        var y = m[3].length===2?'20'+m[3]:m[3];
+        d.date = y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+      }
+      var m2 = line.match(/(\d{1,2})\s+(يناير|فبراير|مارس|أبريل|مايو|يونيو|يوليو|أغسطس|سبتمبر|أكتوبر|نوفمبر|ديسمبر)\s+(\d{4})/);
+      if (m2) {
+        var months={'يناير':'01','فبراير':'02','مارس':'03','أبريل':'04','مايو':'05','يونيو':'06','يوليو':'07','أغسطس':'08','سبتمبر':'09','أكتوبر':'10','نوفمبر':'11','ديسمبر':'12'};
+        d.date = m2[3]+'-'+months[m2[2]]+'-'+m2[1].padStart(2,'0');
+      }
+    }
+    if (/وقت|الوقت/.test(line)) {
+      var m = line.match(/(\d{1,2}):(\d{2})/);
+      if (m) d.time = m[0];
+    }
+    if (/مكان|الاجتماع/.test(line) && !d.location) {
+      var v = line.replace(/.*[:	]/,'').trim();
+      if (v.length > 2) d.location = v;
+    }
+    if (/رئيس الفريق|رئيس الاجتماع/.test(line)) {
+      var v = line.replace(/.*[:	]/,'').trim().replace(/رئيس.*/,'').trim();
+      if (v.length > 1) d.chair = v.split('-').pop().trim();
+    }
+    if (/مقرر|كاتب/.test(line)) {
+      var v = line.replace(/.*[:	]/,'').trim();
+      if (v.length > 1) d.secretary = v;
+    }
+    if (/رقم.*محضر|محضر رقم/.test(line)) {
+      d.title = 'اجتماع فريق التحول الرقمي — محضر ' + (line.match(/\([\d\/]+\)/)||[line])[0];
+    }
+  });
+
+  // Extract attendees (lines with - or •)
+  var inAttendees = false, inGuests = false, inExcused = false;
+  lines.forEach(function(line) {
+    if (/^الحضور/.test(line)) { inAttendees=true; inGuests=false; inExcused=false; return; }
+    if (/^المدعو/.test(line))  { inGuests=true; inAttendees=false; inExcused=false; return; }
+    if (/^المعتذر/.test(line)) { inExcused=true; inAttendees=false; inGuests=false; return; }
+    if (/^جدول|^محضر|^\d\s/.test(line)) { inAttendees=false; inGuests=false; inExcused=false; }
+
+    if ((inAttendees||inGuests||inExcused) && /^[-•\-]/.test(line)) {
+      var name = line.replace(/^[-•\-\s]+/,'').replace(/\s+(رئيس|نائب|عضو|مقرر).*/,'').trim();
+      if (name.length > 1) {
+        if (inAttendees) d.attendees.push(name);
+        else if (inGuests) d.guests.push(name);
+        else if (inExcused) d.excused.push(name);
+      }
+    }
+  });
+
+  // Agenda
+  for (var i=1; i<=9; i++) {
+    var agRe = new RegExp(i+'[.\\t ]([^\\n]{5,80})');
+    var agM = txt.match(agRe);
+    if (agM && d.agenda.length < 8) d.agenda.push(agM[1].trim());
+  }
+  if (!d.title) d.title = 'اجتماع مستورد — ' + (d.date||today());
+  return d;
+}
+
+async function saveImported(parsed, type) {
+  var decisions = (parsed.decisions||[]).map(function(dec, i) {
+    return { id:'d'+Date.now()+i, text:dec.text||'', agenda:dec.agenda||'', discussion:dec.discussion||'' };
+  });
+  var actions = (parsed.decisions||[]).map(function(dec, i) {
+    return {
+      decisionId: decisions[i].id, text:dec.text||'',
+      owner:dec.owner||'', due:dec.due||'',
+      implemented:dec.implemented||'', reason:dec.reason||'',
+      status:'open', createdAt:new Date().toISOString()
+    };
+  });
+
+  var data = {
+    type, title:parsed.title||'اجتماع مستورد',
+    date:parsed.date||today(), time:parsed.time||'',
+    location:parsed.location||'', chair:parsed.chair||'',
+    secretary:parsed.secretary||'', approver:parsed.approver||'',
+    attendees:parsed.attendees||[], guests:parsed.guests||[], excused:parsed.excused||[],
+    agenda:parsed.agenda||[], decisions, actions,
+    status:'draft', createdAt:new Date().toISOString(), createdBy:CU?CU.email:''
+  };
+
+  showOv('جارٍ الحفظ...');
+  var id = await saveMeeting(data);
+  if (id) {
+    data.id = id;
+    MEETINGS.unshift(data);
+    updateSidebarStats();
+    $('modal-import').classList.add('hide');
+    hideOv();
+    toast('تم الاستيراد ✅','ok');
+    showDetail(id);
+  } else { hideOv(); }
+}
+
+// Add seed button to sidebar footer// Add seed button to sidebar footer// Add seed button to sidebar footer// Add seed button to sidebar footer
+const sbFoot = document.querySelector('.sb-foot');
+if (sbFoot && MEETINGS !== undefined) {
+  const seedBtn = document.createElement('button');
+  seedBtn.className = 'btn-logout';
+  seedBtn.title = 'إضافة الاجتماع الأول';
+  seedBtn.textContent = '+ أول اجتماع';
+  seedBtn.style.cssText = 'font-size:.58rem;color:rgba(255,255,255,.25);padding:2px 6px;border-radius:4px;border:1px solid rgba(255,255,255,.08);background:none;cursor:pointer;margin-left:4px';
+  seedBtn.addEventListener('click', seedFirstMeeting);
+  sbFoot.insertBefore(seedBtn, sbFoot.firstChild);
+}
+</script>
+</body>
+</html>
