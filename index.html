@@ -287,6 +287,57 @@ a{text-decoration:none;color:inherit}
 .role-editor{background:var(--p3);color:var(--p2);border-color:var(--p3)}
 .role-viewer{background:var(--n1);color:var(--n5);border-color:var(--n1)}
 
+/* ── TEAM STRUCTURE ── */
+.team-card {
+  background: var(--wh);
+  border: 1px solid var(--n2);
+  border-radius: var(--rad);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--p);
+}
+.team-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.team-card-name {
+  font-size: .95rem;
+  font-weight: 800;
+  color: var(--n9);
+}
+.team-card-title {
+  font-size: .75rem;
+  color: var(--p);
+  font-weight: 700;
+  margin-top: 2px;
+}
+.team-card-dept {
+  font-size: .65rem;
+  color: var(--n4);
+  margin-top: 3px;
+}
+.team-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: .7rem;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--n2);
+}
+.team-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.team-info-label {
+  color: var(--n4);
+  font-weight: 600;
+  font-size: .65rem;
+}
+
 /* ── LOGIN SCREEN ── */
 #loginScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0A2A4A 0%,#0F3D68 50%,#1A5491 100%);display:flex;align-items:center;justify-content:center}
 #loginScreen.hide{display:none}
@@ -974,6 +1025,7 @@ a{text-decoration:none;color:inherit}
       <span class="sb-grp">التقييم والأدوار</span>
       <button class="nb" data-p="readiness"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>جاهزية التقييم</button>
       <button class="nb" data-p="owners"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>ملاك المؤشرات</button>
+      <button class="nb" data-p="team"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>هيكل الفريق</button>
       <div class="nb-sep"></div>
       <span class="sb-grp">الأدوات</span>
       <a href="/meetings" target="_blank" class="nb" style="text-decoration:none"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/><path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/></svg>إدارة الاجتماعات<svg viewBox="0 0 20 20" fill="currentColor" style="width:9px;height:9px;margin-right:auto;opacity:.4"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/></svg></a>
@@ -1091,6 +1143,13 @@ a{text-decoration:none;color:inherit}
       <div class="page" id="pg-owners">
         <div class="ph"><div class="ph-l"><div class="pt"><div class="pt-icon ib"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg></div>لوحة ملاك المؤشرات</div><div class="pd">توزيع الأدوار والمسؤوليات حسب المناظير والمحاور</div></div></div>
         <div id="ownersContent"></div>
+      </div>
+
+      <!-- TEAM STRUCTURE -->
+      <div class="page" id="pg-team">
+        <div class="ph"><div class="ph-l"><div class="pt"><div class="pt-icon ib"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg></div>هيكل الفريق</div><div class="pd">هيكل فريق التحول الرقمي وتسلسل القيادة</div></div></div>
+        <div class="ph-r admin-only"><button class="btn-sm btn-primary" onclick="window.editTeamStructure()"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" transform="rotate(-90 10 10)"/></svg>تعديل الهيكل</button></div></div>
+        <div id="teamContent" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px"></div>
       </div>
 
       <!-- PERSPECTIVES -->
@@ -1632,6 +1691,8 @@ function applySession() {
     localStorage.setItem('oaaaqa_role',  ROLE);
     localStorage.setItem('oaaaqa_name',  CU.displayName||CU.email);
   } catch(e) {}
+  // Load team structure from storage
+  loadTeamStructure();
   go('home');
   refreshAll();
 }
@@ -1668,7 +1729,7 @@ function showLoginErr(msg) {
 
 // ── NAVIGATION ──────────────────────────────────
 const TITLES = {home:'لوحة القيادة',perspectives:'المناظير الثلاثة',tasks:'المهام والمبادرات',readiness:'جاهزية التقييم',owners:'ملاك المؤشرات',
-  docs:'متابعة الوثائق',impact:'مؤشرات الأثر الفعلي',roadmap:'خارطة الطريق',
+  docs:'متابعة الوثائق',impact:'مؤشرات الأثر الفعلي',roadmap:'خارطة الطريق',team:'هيكل الفريق',
   log:'سجل التغييرات',users:'إدارة المستخدمين',chpwd:'تغيير كلمة المرور'};
 let curPage = 'home';
 let radarChart = null;
@@ -1697,6 +1758,7 @@ function renderPage(p) {
   else if (p==='roadmap') renderRoadmap();
   else if (p==='readiness') renderReadiness();
   else if (p==='owners') renderOwners();
+  else if (p==='team') renderTeam();
   else if (p==='log') { if(ROLE==='admin') renderLog(); }
   else if (p==='users') { if(ROLE==='admin') renderUsers(); }
 }
@@ -2366,6 +2428,158 @@ function renderOwners() {
   el.innerHTML = html;
 }
 
+// ── TEAM STRUCTURE ──────────────────────────────
+let TEAM = []; // Array to hold team structure data
+
+function renderTeam() {
+  var el = document.getElementById('teamContent');
+  if (!el) return;
+
+  // Default team structure if empty
+  if (!TEAM || TEAM.length === 0) {
+    TEAM = [
+      {id:'ceo', name:'المدير العام', title:'Chief Executive Officer', email:'ceo@organization.sa', phone:'+966-1-XXXX-XXXX', department:'الإدارة العليا', color:'var(--primary)'},
+      {id:'director-dtt', name:'مدير التحول الرقمي', title:'Digital Transformation Director', email:'director@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--accent)', parentId:'ceo'},
+      {id:'manager-tech', name:'مدير التقنية', title:'Technology Manager', email:'tech@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--primary-mid)', parentId:'director-dtt'},
+      {id:'manager-ops', name:'مدير العمليات', title:'Operations Manager', email:'ops@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--primary-mid)', parentId:'director-dtt'},
+      {id:'manager-change', name:'مدير إدارة التغيير', title:'Change Management Manager', email:'change@organization.sa', phone:'+966-1-XXXX-XXXX', department:'التحول الرقمي', color:'var(--primary-mid)', parentId:'director-dtt'}
+    ];
+  }
+
+  var html = '';
+  
+  // Build hierarchy tree
+  var rootMembers = TEAM.filter(m => !m.parentId);
+  
+  function renderMember(member, level = 0) {
+    const children = TEAM.filter(m => m.parentId === member.id);
+    const hasChildren = children.length > 0;
+    
+    var memberHtml = '<div class="card" style="background:linear-gradient(135deg,rgba(255,255,255,.5) 0%,'+member.color+'11 100%);border-left:4px solid '+member.color+';position:relative">';
+    
+    memberHtml += '<div style="padding:16px">';
+    memberHtml += '<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px">';
+    memberHtml += '<div>';
+    memberHtml += '<div style="font-size:.95rem;font-weight:800;color:var(--n9)">'+member.name+'</div>';
+    memberHtml += '<div style="font-size:.75rem;color:'+member.color+';font-weight:700;margin-top:2px">'+member.title+'</div>';
+    memberHtml += '<div style="font-size:.65rem;color:var(--n4);margin-top:3px">'+member.department+'</div>';
+    memberHtml += '</div>';
+    memberHtml += (ROLE==='admin'?'<button class="btn-sm btn-ghost" onclick="window.editTeamMember(\''+member.id+'\')" style="padding:4px 8px"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg></button>':'');
+    memberHtml += '</div>';
+    
+    memberHtml += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.7rem">';
+    memberHtml += '<div><span style="color:var(--n4)">البريد:</span><br><a href="mailto:'+member.email+'" style="color:var(--primary);text-decoration:underline">'+member.email+'</a></div>';
+    memberHtml += '<div><span style="color:var(--n4)">الهاتف:</span><br>'+member.phone+'</div>';
+    memberHtml += '</div>';
+    
+    if (hasChildren) {
+      memberHtml += '<div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--n2)"><div style="font-size:.65rem;font-weight:700;color:var(--n5);margin-bottom:10px;text-transform:uppercase">المرؤوسون المباشرون</div>';
+      children.forEach(child => {
+        memberHtml += '<div style="font-size:.75rem;padding:8px;background:var(--n0);border-radius:6px;margin-bottom:6px;display:flex;align-items:center;gap:6px">';
+        memberHtml += '<div style="width:3px;height:3px;border-radius:50%;background:'+child.color+'"></div>';
+        memberHtml += '<span>'+child.name+' <span style="color:var(--n4)">('+child.title+')</span></span>';
+        memberHtml += '</div>';
+      });
+      memberHtml += '</div>';
+    }
+    
+    memberHtml += '</div>';
+    return memberHtml;
+  }
+  
+  rootMembers.forEach(member => {
+    html += renderMember(member);
+  });
+  
+  if (html === '') {
+    html = '<div class="card card-p" style="grid-column:1/-1;text-align:center"><p style="color:var(--n4)">لم يتم تعريف هيكل الفريق بعد. اطلب من المسؤول تكوين الهيكل.</p></div>';
+  }
+  
+  el.innerHTML = html;
+}
+
+function editTeamMember(memberId) {
+  const member = TEAM.find(m => m.id === memberId);
+  if (!member) return;
+  
+  const newName = prompt('اسم الموظف:', member.name);
+  if (newName !== null) {
+    member.name = newName;
+    const newTitle = prompt('المسمى الوظيفي:', member.title);
+    if (newTitle !== null) {
+      member.title = newTitle;
+      const newEmail = prompt('البريد الإلكتروني:', member.email);
+      if (newEmail !== null) {
+        member.email = newEmail;
+        const newPhone = prompt('رقم الهاتف:', member.phone);
+        if (newPhone !== null) {
+          member.phone = newPhone;
+          saveTeamStructure();
+          renderTeam();
+          toast('تم تحديث بيانات الموظف ✅', 'ok');
+        }
+      }
+    }
+  }
+}
+
+function editTeamStructure() {
+  if (ROLE !== 'admin') {
+    toast('هذه الميزة متاحة فقط للمسؤول', 'err');
+    return;
+  }
+  
+  const newMemberName = prompt('إضافة موظف جديد - الاسم:');
+  if (newMemberName === null || newMemberName.trim() === '') return;
+  
+  const newTitle = prompt('المسمى الوظيفي:');
+  if (newTitle === null) return;
+  
+  const newEmail = prompt('البريد الإلكتروني:');
+  if (newEmail === null) return;
+  
+  const newPhone = prompt('رقم الهاتف:');
+  if (newPhone === null) return;
+  
+  const newDept = prompt('القسم:');
+  if (newDept === null) return;
+  
+  const newId = 'user-' + Date.now();
+  TEAM.push({
+    id: newId,
+    name: newMemberName,
+    title: newTitle,
+    email: newEmail,
+    phone: newPhone,
+    department: newDept,
+    color: 'var(--primary-mid)',
+    parentId: 'director-dtt'
+  });
+  
+  saveTeamStructure();
+  renderTeam();
+  toast('تم إضافة الموظف بنجاح ✅', 'ok');
+}
+
+function saveTeamStructure() {
+  try {
+    localStorage.setItem('dtt_team_structure', JSON.stringify(TEAM));
+  } catch(e) {
+    console.error('Error saving team structure:', e);
+  }
+}
+
+function loadTeamStructure() {
+  try {
+    const saved = localStorage.getItem('dtt_team_structure');
+    if (saved) {
+      TEAM = JSON.parse(saved);
+    }
+  } catch(e) {
+    console.error('Error loading team structure:', e);
+  }
+}
+
 // ── SIDEBAR ──────────────────────────────────────
 function toggleSb() {
   const sb = document.getElementById('sb'), ov = document.getElementById('sbov');
@@ -2459,6 +2673,9 @@ window.go             = go;
 window.toggleSb       = toggleSb;
 window.closeSb        = closeSb;
 window.setUserRole    = setUserRole;
+window.editTeamStructure = editTeamStructure;
+window.editTeamMember = editTeamMember;
+window.renderTeam     = renderTeam;
 window.signInEmail    = signInEmail;
 window.doLogout       = doLogout;
 window.syncData       = syncData;
@@ -2468,12 +2685,16 @@ window.go             = go;
 window.toggleSb       = toggleSb;
 window.closeSb        = closeSb;
 window.setUserRole    = setUserRole;
+window.editTeamStructure = editTeamStructure;
+window.editTeamMember = editTeamMember;
+window.renderTeam     = renderTeam;
 
 // Flush any queued calls from before module loaded
 if (window.__dtccFlush) {
   window.__dtccFlush({
     signInGoogle, signInEmail, doLogout, syncData,
-    createUser, changePassword, go, toggleSb, closeSb, setUserRole
+    createUser, changePassword, go, toggleSb, closeSb, setUserRole,
+    editTeamStructure, editTeamMember, renderTeam
   });
 }
 
