@@ -131,6 +131,7 @@ img{max-width:100%}
 .mc-team .mc-top-bar{background:var(--navy)}
 .mc-sub  .mc-top-bar{background:var(--gold)}
 .mc-other.mc-top-bar,.mc-other .mc-top-bar{background:var(--green)}
+.mc-portal .mc-top-bar{background:var(--purple)}
 
 /* ── BADGES / STATUS ── */
 .bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:.63rem;font-weight:700;gap:3px;white-space:nowrap}
@@ -142,6 +143,7 @@ img{max-width:100%}
 .tp-team {background:var(--navy-pale);color:var(--navy)}
 .tp-sub  {background:var(--gold-pale);color:var(--gold)}
 .tp-other{background:var(--green-pale);color:var(--green-dark)}
+.tp-portal{background:var(--purple-pale);color:var(--purple)}
 .act-open{background:var(--orange-pale);color:var(--orange)}
 .act-wip {background:var(--navy-pale);color:var(--navy)}
 .act-done{background:var(--green-pale);color:var(--green-dark)}
@@ -213,10 +215,10 @@ img{max-width:100%}
 .act-meta-item svg{width:10px;height:10px}
 
 /* Attendance */
-.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
-.att-card{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--g200);border-radius:var(--r-sm);background:var(--g50)}
-.att-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#fff;flex-shrink:0}
-.att-name{font-size:.71rem;font-weight:600;color:var(--g700);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px}
+.att-card{display:flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--g200);border-radius:var(--r-sm);background:var(--g50);min-width:0;overflow:hidden}
+.att-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#fff;flex-shrink:0;min-width:28px}
+.att-name{font-size:.71rem;font-weight:600;color:var(--g700);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px}
 .att-type{font-size:.58rem;color:var(--g500)}
 
 /* Archive list */
@@ -316,18 +318,8 @@ img{max-width:100%}
 <body>
 
 <!-- ── LOGIN ── -->
-<script>
-// Hide login immediately if coming from dashboard
-try {
-  if (localStorage.getItem('oaaaqa_uid') && localStorage.getItem('oaaaqa_email')) {
-    document.addEventListener('DOMContentLoaded', function() {
-      var ls = document.getElementById('loginScreen');
-      if (ls) ls.style.display = 'none';
-    });
-  }
-} catch(e) {}
-</script>
-<div id="loginScreen">
+
+<div id="loginScreen" style="display:none">
   <div class="login-brand">
     <div class="login-brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
     <div class="login-brand-title">نظام إدارة<br>الاجتماعات والمحاضر</div>
@@ -367,6 +359,7 @@ try {
       <span class="nb-grp">الاجتماعات</span>
       <button class="nb" data-p="team"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a4 4 0 00-.5-1.957A3 3 0 0118 18v1h-2zM2.5 15.957A4.002 4.002 0 002 17v1h-0H2v-1a3 3 0 012.45-2.957z"/></svg>اجتماعات فريق التحول<span class="nb-cnt" id="cnt-team">0</span></button>
       <button class="nb" data-p="sub"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>اجتماعات الفرق الفرعية<span class="nb-cnt gold" id="cnt-sub">0</span></button>
+      <button class="nb" data-p="portal"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16A8 8 0 0010 2zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.559-.499-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.559.499.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z" clip-rule="evenodd"/></svg>بوابة الخدمات الخارجية<span class="nb-cnt" style="background:var(--purple)" id="cnt-portal">0</span></button>
       <button class="nb" data-p="other"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>أخرى<span class="nb-cnt" style="background:var(--green)" id="cnt-other">0</span></button>
       <div class="nb-sep"></div>
       <span class="nb-grp">المتابعة</span>
@@ -439,6 +432,14 @@ try {
         </div>
         <div class="ga" id="list-sub"></div>
       </div>
+      <div class="page" id="pg-portal">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div><div style="font-size:.95rem;font-weight:800;color:var(--g900);display:flex;align-items:center;gap:7px"><div style="width:10px;height:10px;border-radius:3px;background:var(--purple)"></div>اجتماعات فريق مشروع بوابة الخدمات الخارجية</div><div style="font-size:.7rem;color:var(--g500);margin-top:2px">اجتماعات فريق مشروع بوابة الخدمات مع الجهات الخارجية</div></div>
+          <button class="btn btn-sm" style="background:var(--purple);color:#fff" onclick="openNew('portal')"><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>جديد</button>
+        </div>
+        <div class="ga" id="list-portal"></div>
+      </div>
+
       <div class="page" id="pg-other">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <div><div style="font-size:.95rem;font-weight:800;color:var(--g900);display:flex;align-items:center;gap:7px"><div style="width:10px;height:10px;border-radius:3px;background:var(--green)"></div>أخرى</div><div style="font-size:.7rem;color:var(--g500);margin-top:2px">اجتماعات مع الوزارة أو جهات خارجية أو طارئة</div></div>
@@ -494,6 +495,7 @@ try {
           <select class="fsel" id="m-type">
             <option value="team">اجتماعات فريق التحول</option>
             <option value="sub">اجتماعات الفرق الفرعية</option>
+            <option value="portal">بوابة الخدمات الخارجية</option>
             <option value="other">أخرى</option>
           </select>
         </div>
@@ -696,9 +698,9 @@ let curDecMeetingId = null;
 // ════════════════════════════════════════════════
 //  CONSTANTS
 // ════════════════════════════════════════════════
-const TYPE_COLORS = { team:'#0F3D68', sub:'#C8922A', other:'#1A7A4A' };
-const TYPE_LABELS = { team:'فريق التحول', sub:'الفرق الفرعية', other:'أخرى' };
-const TYPE_BADGE  = { team:'tp-team', sub:'tp-sub', other:'tp-other' };
+const TYPE_COLORS = { team:'#0F3D68', sub:'#C8922A', portal:'#5B2D8E', other:'#1A7A4A' };
+const TYPE_LABELS = { team:'فريق التحول', sub:'الفرق الفرعية', portal:'بوابة الخدمات الخارجية', other:'أخرى' };
+const TYPE_BADGE  = { team:'tp-team', sub:'tp-sub', portal:'tp-portal', other:'tp-other' };
 const STATUS_LABELS = { draft:'مسودة', review:'قيد المراجعة', approved:'معتمد', scheduled:'مجدول' };
 const STATUS_CLS    = { draft:'st-draft', review:'st-review', approved:'st-approved', scheduled:'st-scheduled' };
 const ACT_LABELS = { open:'مفتوح', wip:'قيد التنفيذ', done:'مكتمل', late:'متأخر' };
@@ -726,6 +728,17 @@ function fmtDate(d) {
 }
 function canEdit() { return ROLE==='admin'||ROLE==='editor'; }
 function canApprove() { return ROLE==='admin'; }
+// custom role: can view sub/portal/other (not team), can add to portal/other only
+function canView(type) {
+  if (ROLE==='admin'||ROLE==='editor'||ROLE==='viewer') return true;
+  if (ROLE==='custom') return type==='sub'||type==='portal'||type==='other';
+  return false;
+}
+function canAdd(type) {
+  if (ROLE==='admin'||ROLE==='editor') return true;
+  if (ROLE==='custom') return type==='portal'||type==='other';
+  return false;
+}
 
 // ════════════════════════════════════════════════
 //  AUTH
@@ -790,7 +803,7 @@ auth.onAuthStateChanged(async user => {
       go('home');
     } else {
       CU = null;
-      $('loginScreen').classList.remove('hide');
+      $('loginScreen').style.display = 'flex';
     }
   }
 });
@@ -800,7 +813,7 @@ auth.onAuthStateChanged(async user => {
 // ════════════════════════════════════════════════
 const PAGE_TITLES = {
   home:'لوحة المتابعة', team:'اجتماعات فريق التحول',
-  sub:'اجتماعات الفرق الفرعية', other:'أخرى',
+  sub:'اجتماعات الفرق الفرعية', portal:'بوابة الخدمات الخارجية', other:'أخرى',
   actions:'الإجراءات المفتوحة', archive:'الأرشيف', detail:'تفاصيل الاجتماع'
 };
 let prevPage = 'home';
@@ -819,9 +832,26 @@ function renderPage(p) {
   if (p==='home')    renderHome();
   else if (p==='team')    renderList('team');
   else if (p==='sub')     renderList('sub');
+  else if (p==='portal')  renderList('portal');
   else if (p==='other')   renderList('other');
   else if (p==='actions') renderActions();
   else if (p==='archive') renderArchive();
+}
+
+function applyRoleNav() {
+  if (ROLE === 'custom') {
+    var teamBtn = document.querySelector('.nb[data-p="team"]');
+    if (teamBtn) teamBtn.style.display = 'none';
+  }
+  setTimeout(function() {
+    document.querySelectorAll('button').forEach(function(btn) {
+      var oc = btn.getAttribute('onclick') || '';
+      if (oc.indexOf('openNew') >= 0) {
+        var type = oc.replace(/.*openNew\(.(\w+).\).*/,'$1');
+        if (!canAdd(type)) btn.style.display = 'none';
+      }
+    });
+  }, 100);
 }
 
 document.querySelectorAll('.nb[data-p]').forEach(btn => {
@@ -862,9 +892,10 @@ function updateSidebarStats() {
   $('ss1').textContent = monthCount;
   $('ss2').textContent = pending;
   $('ss3').textContent = openActs;
-  $('cnt-team').textContent  = MEETINGS.filter(m=>m.type==='team').length;
-  $('cnt-sub').textContent   = MEETINGS.filter(m=>m.type==='sub').length;
-  $('cnt-other').textContent = MEETINGS.filter(m=>m.type==='other').length;
+  $('cnt-team').textContent   = MEETINGS.filter(m=>m.type==='team').length;
+  $('cnt-sub').textContent    = MEETINGS.filter(m=>m.type==='sub').length;
+  $('cnt-portal').textContent = MEETINGS.filter(m=>m.type==='portal').length;
+  $('cnt-other').textContent  = MEETINGS.filter(m=>m.type==='other').length;
   $('cnt-actions').textContent = openActs;
 }
 
